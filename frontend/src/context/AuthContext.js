@@ -63,12 +63,24 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const handleLogin = (params, errorCallback) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
+    console.log('running')
+    const { email, password } = params
+    axios({
+      method: 'POST',
+      url: 'http://localhost:8000/api/signin',
+      data: { email, password }
+    })
       .then(async res => {
         window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
       })
       .then(() => {
+        // axios({
+        //   method: 'GET',
+        //   url: 'http://localhost:8000/get-user-token',
+        //   headers: {
+        //     Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
+        //   }
+        // })
         axios
           .get(authConfig.meEndpoint, {
             headers: {
@@ -77,6 +89,7 @@ const AuthProvider = ({ children }) => {
           })
           .then(async response => {
             const returnUrl = router.query.returnUrl
+            console.log('The Returned URL', returnUrl)
             setUser({ ...response.data.userData })
             await window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
@@ -97,14 +110,22 @@ const AuthProvider = ({ children }) => {
   }
 
   const handleRegister = (params, errorCallback) => {
-    axios
-      .post(authConfig.registerEndpoint, params)
+    console.log('running')
+    const { email, password } = params
+    axios({
+      method: 'POST',
+      url: 'http://localhost:8000/api/signup',
+      data: { email, password }
+    })
       .then(res => {
+        console.log('signup success', res)
+        router.push('/email-sent')
         if (res.data.error) {
           if (errorCallback) errorCallback(res.data.error)
-        } else {
-          handleLogin({ email: params.email, password: params.password })
         }
+        // else {
+        //   handleLogin({ email: params.email, password: params.password })
+        // }
       })
       .catch(err => (errorCallback ? errorCallback(err) : null))
   }

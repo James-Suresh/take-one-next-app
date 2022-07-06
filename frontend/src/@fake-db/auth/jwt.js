@@ -92,11 +92,13 @@ mock.onPost('/jwt/register').reply(request => {
   }
 })
 mock.onGet('/auth/me').reply(config => {
+  console.log('running')
   // @ts-ignore
   const token = config.headers.Authorization
 
   // get the decoded payload and header
   const decoded = jwt.decode(token, { complete: true })
+  console.log(token)
   if (decoded) {
     // @ts-ignore
     const { id: userId } = decoded.payload

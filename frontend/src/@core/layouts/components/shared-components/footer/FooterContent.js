@@ -10,24 +10,15 @@ const FooterContent = () => {
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography sx={{ mr: 2 }}>
-        {`© ${new Date().getFullYear()}, Made with `}
-        <Box component='span' sx={{ color: 'error.main' }}>
-          ❤️
-        </Box>
-        {` by `}
-        <Link target='_blank' href='https://pixinvent.com/'>
-          Pixinvent
-        </Link>
-      </Typography>
+      <Typography sx={{ mr: 2 }}>{`© ${new Date().getFullYear()}, Take One Film Support `}</Typography>
       {hidden ? null : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', '& :not(:last-child)': { mr: 4 } }}>
-          <Link target='_blank' href='https://themeforest.net/licenses/standard'>
-            License
-          </Link>
-          <Link target='_blank' href='https://1.envato.market/pixinvent_portfolio'>
-            More Themes
-          </Link>
+          <Typography sx={{ mr: 2 }}>
+            {`Made by `}
+            <Link target='_blank' href='https://simpeto.com/'>
+              Simpeto
+            </Link>
+          </Typography>
           <Link
             target='_blank'
             href='https://pixinvent.com/demo/materialize-mui-react-nextjs-admin-template/documentation'

@@ -29,7 +29,7 @@ const MenuNavLink = styled(ListItemButton)(({ theme }) => ({
   transition: 'padding-left .25s ease-in-out',
   '&.active': {
     '&, &:hover': {
-      backgroundColor: theme.palette.primary.light
+      background: theme.palette.primary.gradient
     },
     '& .MuiTypography-root': {
       fontWeight: 500,

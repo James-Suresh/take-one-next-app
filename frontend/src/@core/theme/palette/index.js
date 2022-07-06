@@ -31,9 +31,10 @@ const DefaultPalette = (mode, skin) => {
     },
     mode: mode,
     primary: {
-      light: '#787EFF',
-      main: '#666CFF',
-      dark: '#5A5FE0',
+      light: '#49eaff',
+      main: '#02cce7',
+      dark: '#4883d7',
+      gradient: 'linear-gradient(90deg, #02cce7 0%, #4883d7 100%)',
       contrastText: '#FFF'
     },
     secondary: {
