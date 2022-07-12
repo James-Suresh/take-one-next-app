@@ -14,14 +14,24 @@ import axios from 'axios'
 // ** Demo Components Imports
 import UserViewLeft from 'src/views/user/view/UserViewLeft'
 import UserViewRight from 'src/views/user/view/UserViewRight'
+import { getLocalStorage } from 'src/hooks/helpers'
 
-const UserViewPage = ({ id, invoiceData }) => {
+const UserViewPage = ({ id }) => {
   // ** State
   const [error, setError] = useState(false)
   const [data, setData] = useState(null)
+
+  // Tokenization for server request
+  const storageChecked = getLocalStorage('accessToken')
+
   useEffect(() => {
     axios
-      .get('/apps/user', { params: { id } })
+      // .get('http://localhost:8000/api/user/view/', { params: { id } })
+      .get(`http://localhost:8000/api/user/view/${id}`, {
+        headers: {
+          Authorization: `Bearer ${storageChecked}`
+        }
+      })
       .then(response => {
         setData(response.data)
         setError(false)
@@ -31,6 +41,7 @@ const UserViewPage = ({ id, invoiceData }) => {
         setError(true)
       })
   }, [id])
+
   if (data) {
     return (
       <Grid container spacing={6}>
@@ -38,7 +49,7 @@ const UserViewPage = ({ id, invoiceData }) => {
           <UserViewLeft data={data} />
         </Grid>
         <Grid item xs={12} md={7} lg={8}>
-          <UserViewRight invoiceData={invoiceData} />
+          <UserViewRight data={data} />
         </Grid>
       </Grid>
     )

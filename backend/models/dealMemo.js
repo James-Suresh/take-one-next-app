@@ -23,13 +23,13 @@ const dealMemoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    onboardingLink: {
-      data: String,
-      default: "",
+    onboardingURL: {
+      type: String,
+      default: null,
     },
-    dealMemoPdf: {
-      data: String,
-      default: "",
+    dealMemoURL: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true, versionKey: false }

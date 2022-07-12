@@ -17,6 +17,7 @@ const Chip = props => {
     success: { ...bgColors.successLight },
     error: { ...bgColors.errorLight },
     warning: { ...bgColors.warningLight },
+    yeild: { ...bgColors.yeildLight },
     info: { ...bgColors.infoLight }
   }
 

@@ -55,23 +55,34 @@ const FileUploaderSingle = () => {
   ))
 
   return (
-    <Box {...getRootProps({ className: 'dropzone' })} sx={acceptedFiles.length ? { height: 450 } : {}}>
-      <input {...getInputProps()} />
-      <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
-        <Img width={300} alt='Upload img' src='/images/misc/upload.png' />
-        <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
-          <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
-          <Typography color='textSecondary'>
-            Drop files here or click{' '}
-            <Link href='/' onClick={handleLinkClick}>
-              browse
-            </Link>{' '}
-            thorough your machine
-          </Typography>
+    <div
+      style={{
+        border: '2px solid #DBDBDB',
+        borderStyle: 'dashed',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '25px',
+        borderRadius: '10px'
+      }}
+    >
+      <Box {...getRootProps({ className: 'dropzone' })} sx={acceptedFiles.length ? { height: 450 } : {}}>
+        <input {...getInputProps()} />
+        <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
+          <Img width={300} alt='Upload img' src='/images/misc/upload.png' />
+          <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
+            <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
+            <Typography color='textSecondary'>
+              Drop files here or click{' '}
+              <Link href='/' onClick={handleLinkClick}>
+                browse
+              </Link>{' '}
+              thorough your machine
+            </Typography>
+          </Box>
         </Box>
+        {files.length ? img : null}
       </Box>
-      {files.length ? img : null}
-    </Box>
+    </div>
   )
 }
 

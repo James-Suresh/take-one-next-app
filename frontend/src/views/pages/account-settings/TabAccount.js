@@ -19,17 +19,23 @@ import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
 import { FormHelperText } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/lab'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+
+// ** Auth Imports
+import { getLocalStorage, isAuth } from 'src/hooks/helpers'
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 
 // ** Third Party Imports
+import uploadFile from 'src/configs/firebase/uploadFile'
+import { v4 as uuidv4 } from 'uuid'
 import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import AdapterDateFns from '@mui/lab/AdapterDateFns'
-import { getLocalStorage } from 'src/hooks/helpers'
+import axios from 'axios'
+import { useRouter } from 'next/router'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -62,25 +68,33 @@ const defaultValues = {
   phone1: '',
   phone2: '',
   email1: '',
-  email2: '',
-  since: new Date()
+  email2: ''
 }
+
+// ** Auth variables
+const auth = isAuth()
+const currentUser = auth
 
 const TabAccount = () => {
   // ** State
-  const [openAlert, setOpenAlert] = useState(true)
-  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+  // const [openAlert, setOpenAlert] = useState(true)
   const [basicPicker, setBasicPicker] = useState(new Date())
+  const [imgSrc, setImgSrc] = useState(auth.photoURL)
+  const [newPhoto, setNewPhoto] = useState()
+  const [submit, setSubmit] = useState('save changes')
+
+  // ** Hooks
+  const router = useRouter()
 
   // Tokenization for server request
   const storageChecked = getLocalStorage('accessToken')
 
-  const onChange = file => {
-    const reader = new FileReader()
-    const { files } = file.target
-    if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result)
-      reader.readAsDataURL(files[0])
+  const onChange = e => {
+    const file = e.target.files[0]
+    if (file) {
+      setImgSrc(file)
+      const photoURL = URL.createObjectURL(file)
+      setNewPhoto(photoURL)
     }
   }
 
@@ -107,34 +121,48 @@ const TabAccount = () => {
     resolver: yupResolver(schema)
   })
 
-  // Handle form submit
-  const onSubmit = (data, photoURL) => {
-    const { firstName, lastName, nickName, phone1, phone2, email1, email2 } = data
+  // Handle form submit to database
+  const onSubmit = async data => {
+    setSubmit('Saving...')
+    const file = imgSrc
+    if (file) {
+      // define all variables to send to backend
+      const since = basicPicker
+      const imageName = uuidv4() + '.' + file
+      const photoURL = await uploadFile(file, `profile/${currentUser._id}/${imageName}`)
+      const { firstName, lastName, nickName, phone1, phone2, email1, email2 } = data
 
-    axios({
-      method: 'PUT',
-      url: 'http://localhost:8000/api/user/update',
-      data: {
-        firstName,
-        lastName,
-        nickName,
-        phone1,
-        phone2,
-        email1,
-        email2
-      },
-      headers: {
-        Authorization: `Bearer ${storageChecked}`
+      if (photoURL) {
+        axios({
+          method: 'PUT',
+          url: 'http://localhost:8000/api/user/update/settings/account',
+          data: {
+            firstName,
+            lastName,
+            nickName,
+            phone1,
+            since,
+            phone2,
+            email1,
+            email2,
+            photoURL
+          },
+          headers: {
+            Authorization: `Bearer ${storageChecked}`
+          }
+        })
+          .then(response => {
+            setSubmit('Save changes')
+            console.log('User info update success', response)
+            toast.success('Your profile has been updated! Please log in again to see updates.')
+            router.push('/user-profile/')
+          })
+          .catch(error => {
+            console.log('User info update FAILED', error.response.data)
+            toast.error('Your profile failed to update. Please try again or contact support if the problem continues')
+          })
       }
-    })
-      .then(response => {
-        console.log('signup success', response)
-        toast.success('Employee Onboarded!')
-      })
-      .catch(error => {
-        console.log('Signup ERROR', error.response.data)
-        toast.error('Employee Onboarding failed')
-      })
+    }
   }
 
   return (
@@ -143,7 +171,8 @@ const TabAccount = () => {
         <Grid container spacing={6}>
           <Grid item xs={12} sx={{ my: 5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ImgStyled src={imgSrc} alt='Profile Pic' />
+              {newPhoto ? <ImgStyled src={newPhoto} alt='Profile Pic' /> : <ImgStyled src={imgSrc} alt='Profile Pic' />}
+              {/* <ImgStyled src={photoURL} alt='Profile Pic' /> */}
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   Upload New Photo
@@ -151,7 +180,7 @@ const TabAccount = () => {
                     hidden
                     type='file'
                     onChange={onChange}
-                    accept='image/png, image/jpeg'
+                    accept='image/png, image/jpeg, application/pdf'
                     id='account-settings-upload-image'
                   />
                 </ButtonStyled>
@@ -232,7 +261,6 @@ const TabAccount = () => {
               <MobileDatePicker
                 label='Season Start Date'
                 value={basicPicker}
-                sx={{ width: '10px' }}
                 onChange={newValue => setBasicPicker(newValue)}
                 renderInput={params => <TextField fullWidth {...params} />}
               />
@@ -321,7 +349,7 @@ const TabAccount = () => {
             {errors.email2 && <FormHelperText sx={{ color: 'error.main' }}>{errors.email2.message}</FormHelperText>}
           </Grid>
 
-          {openAlert ? (
+          {/* {openAlert ? (
             <Grid item xs={12}>
               <Alert
                 severity='warning'
@@ -338,11 +366,11 @@ const TabAccount = () => {
                 </Link>
               </Alert>
             </Grid>
-          ) : null}
+          ) : null} */}
 
           <Grid item xs={12}>
-            <Button variant='contained' sx={{ mr: 4 }}>
-              Save Changes
+            <Button variant='contained' sx={{ mr: 4 }} type='submit'>
+              {submit}
             </Button>
             <Button type='reset' variant='outlined' color='secondary'>
               Reset

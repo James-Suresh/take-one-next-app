@@ -51,19 +51,6 @@ const shiftObj = {
   Night: { title: 'Night Shift', color: 'primary' }
 }
 
-// ** Full Name Getter
-const getFullName = params =>
-  toast(
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      {/* {renderClient(params)} */}
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-          {params.row.full_name}
-        </Typography>
-      </Box>
-    </Box>
-  )
-
 const ViewUserAvailabilityTable = ({ viewedUser }) => {
   // ** States
   const [pageSize, setPageSize] = useState(7)
@@ -135,11 +122,8 @@ const ViewUserAvailabilityTable = ({ viewedUser }) => {
       headerName: 'Name',
       hide: hideNameColumn,
       renderCell: params => {
-        const { row } = params
-        const firstName = isAuth().firstName
-        const lastName = isAuth().lastName
-        const email = isAuth().email
-
+        const { firstName, lastName, email } = viewedUser
+        // console.log(params.row.email)
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {/* {renderClient(params)} */}
@@ -197,9 +181,9 @@ const ViewUserAvailabilityTable = ({ viewedUser }) => {
       renderCell: params => {
         return (
           <Stack direction='row' spacing={1}>
-            <Tooltip arrow title='Edit'>
+            <Tooltip arrow title='Permanently Delete'>
               <IconButton size='small' onClick={() => deleteAvailabilityAsync(params.row._id)}>
-                <EditRounded />
+                <DeleteForeverRounded />
               </IconButton>
             </Tooltip>
             {/* <Button size='small' variant='outlined' color='secondary' onClick={() => getFullName(params)}>
@@ -214,7 +198,7 @@ const ViewUserAvailabilityTable = ({ viewedUser }) => {
   return (
     <Card>
       <CardHeader
-        title='Your Availability'
+        title='Users Availability'
         action={
           <Box>
             <Button size='small' variant='contained' onClick={() => setHideNameColumn(!hideNameColumn)}>

@@ -35,8 +35,11 @@ exports.createNewDealMemo = (req, res) => {
     seasonStartDate,
     payrollPhone,
     payrollEmail,
-    onboardingLink,
+    onboardingURL,
+    dealMemoURL,
   } = req.body;
+
+  console.log(dealMemoURL);
 
   const onSuccess = success(res);
   const onError = error(res);
@@ -48,7 +51,8 @@ exports.createNewDealMemo = (req, res) => {
       seasonStartDate,
       payrollPhone,
       payrollEmail,
-      onboardingLink,
+      onboardingURL,
+      dealMemoURL,
     })
     .then(onSuccess)
     .catch(onError);

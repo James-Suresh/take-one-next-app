@@ -1,26 +1,18 @@
-// ** Third Party Imports
-import axios from 'axios'
+// ** Import hooks
+import { isAuth } from 'src/hooks/helpers'
 
 // ** Demo Components Imports
 import UserViewPage from 'src/views/user/view/UserViewPage'
 
-const UserProfile = ({ invoiceData }) => {
-  return <UserViewPage id='1' invoiceData={invoiceData} />
+const UserView = () => {
+  const currentUserId = isAuth()._id
+
+  return <UserViewPage id={currentUserId} />
 }
 
-export const getStaticProps = async () => {
-  const res = await axios.get('/apps/invoice/invoices')
-  const invoiceData = res.data.allData
-
-  return {
-    props: {
-      invoiceData
-    }
-  }
-}
-UserProfile.acl = {
+UserView.acl = {
   action: 'read',
   subject: 'scheduler-page'
 }
 
-export default UserProfile
+export default UserView

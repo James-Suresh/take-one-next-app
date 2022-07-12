@@ -11,6 +11,7 @@ import Select from '@mui/material/Select'
 
 // ** Icons Imports
 import ExportVariant from 'mdi-material-ui/ExportVariant'
+import { Typography } from '@mui/material'
 
 const DealMemoTableHeader = props => {
   // ** Props
@@ -20,14 +21,17 @@ const DealMemoTableHeader = props => {
     <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
       {/* <Button sx={{ mr: 4, mb: 2 }} color='secondary' variant='outlined' startIcon={<ExportVariant />}>
         Export
-      </Button> */}
+      </Button>
       <TextField
         size='small'
         value={value}
         placeholder='Search User'
         sx={{ mr: 6, mb: 2 }}
         onChange={e => handleFilter(e.target.value)}
-      />
+      /> */}
+      <Typography variant='h6' sx={{ my: 4 }}>
+        All Current Deal Memos
+      </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <FormControl size='small' sx={{ mb: 2 }}></FormControl>
       </Box>

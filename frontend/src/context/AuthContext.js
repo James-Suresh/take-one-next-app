@@ -65,6 +65,7 @@ const AuthProvider = ({ children }) => {
   const handleLogin = (params, errorCallback) => {
     console.log('running')
     const { email, password } = params
+    console.log('login info', { email, password })
     axios({
       method: 'POST',
       url: 'http://localhost:8000/api/signin',
@@ -72,6 +73,7 @@ const AuthProvider = ({ children }) => {
     })
       .then(async res => {
         window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
+        console.log('THE RESP', res.data)
       })
       .then(() => {
         // axios({
@@ -88,11 +90,9 @@ const AuthProvider = ({ children }) => {
             }
           })
           .then(async response => {
-            const returnUrl = router.query.returnUrl
-            console.log('The Returned URL', returnUrl)
             setUser({ ...response.data.userData })
             await window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
-            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+            const redirectURL = response.data.userData.firstName === null ? '/onboarding' : '/'
             router.replace(redirectURL)
           })
       })

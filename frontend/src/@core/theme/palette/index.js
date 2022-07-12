@@ -61,6 +61,12 @@ const DefaultPalette = (mode, skin) => {
       dark: '#DF9F23',
       contrastText: '#FFF'
     },
+    yeild: {
+      light: '#ffec3b',
+      main: '#fcd303',
+      dark: '#ccb800',
+      contrastText: '#FFF'
+    },
     info: {
       light: '#40CDFA',
       main: '#26C6F9',

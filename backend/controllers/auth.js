@@ -366,6 +366,8 @@ exports.signin = (req, res) => {
       expiresIn: "7d",
     });
 
+    console.log("Id FOR SIGNING", { _id: user._id });
+
     const { _id, email, role } = user;
     console.log("Signin Success");
 
@@ -412,10 +414,10 @@ exports.getUserToken = (req, res) => {
   if (decoded) {
     // define email variable
     const { _id: userId } = decoded.payload;
-    console.log(userId);
+    console.log("The user logging in", userId);
 
     // find user in database with matching email
-    User.findOne({ userId }).exec((err, user) => {
+    User.findById(userId).exec((err, user) => {
       if (err || !user) {
         return res.status(400).json({
           error: "User with that email does not exist. Please signup",
@@ -423,13 +425,13 @@ exports.getUserToken = (req, res) => {
       }
       console.log("Before deletion", user);
       // delete password data
-      delete user.hashed_password;
-      delete user.salt;
+      // delete user.hashed_password;
+      // delete user.salt;
 
       // store user data in variable userData
       const userData = user;
 
-      console.log("after deletion", userData);
+      // console.log("after deletion", userData);
       return res.status(200).json({ userData });
     });
   } else {

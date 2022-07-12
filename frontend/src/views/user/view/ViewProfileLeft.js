@@ -47,6 +47,7 @@ import { getLocalStorage } from 'src/hooks/helpers'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
+import { Tag } from '@mui/icons-material'
 
 // ** Styled <sup> component
 const Sup = styled('sup')(({ theme }) => ({
@@ -66,7 +67,7 @@ const Sub = styled('sub')({
 
 const roleColors = {
   admin: 'error',
-  support: 'info',
+  support: 'warning',
   author: 'warning',
   user: 'success',
   subscriber: 'primary'
@@ -80,7 +81,12 @@ const positionColors = {
 
 const booleanColors = {
   true: 'success',
-  false: 'warning'
+  false: 'error'
+}
+
+const shiftColors = {
+  Day: 'yeild',
+  Night: 'info'
 }
 
 // ** Default state values
@@ -108,6 +114,9 @@ const ViewProfileLeft = ({ data }) => {
   const handleEditClickOpen = () => setOpenEdit(true)
   const handleEditClose = () => setOpenEdit(false)
 
+  // Get viewed user ID from useEffect props
+  const viewedUserId = data._id
+
   // YUP validation rules
   const schema = yup.object().shape({
     legacy: yup.boolean(),
@@ -119,6 +128,8 @@ const ViewProfileLeft = ({ data }) => {
     burned: yup.boolean(),
     doNotBook: yup.boolean()
   })
+
+  const workDetailsLabel = value => (value === null ? 'No Record' : value.toString())
 
   // React Hook controller
   const {
@@ -137,9 +148,11 @@ const ViewProfileLeft = ({ data }) => {
     const { legacy, crewParking, baseCamp, travel, requested, set, andyPriorityList, needsPotty, burned, doNotBook } =
       data
 
+    console.log(travel)
+
     axios({
       method: 'PUT',
-      url: 'http://localhost:8000/api/user/update',
+      url: 'http://localhost:8000/api/user/update/admin',
       data: {
         legacy,
         crewParking,
@@ -150,7 +163,8 @@ const ViewProfileLeft = ({ data }) => {
         andyPriorityList,
         needsPotty,
         burned,
-        doNotBook
+        doNotBook,
+        viewedUserId
       },
       headers: {
         Authorization: `Bearer ${storageChecked}`
@@ -234,9 +248,19 @@ const ViewProfileLeft = ({ data }) => {
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Role:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {data.role}
-                  </Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={data.role}
+                    color={roleColors[data.role]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
@@ -272,7 +296,7 @@ const ViewProfileLeft = ({ data }) => {
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Email 1:
                   </Typography>
-                  <Typography variant='body2'>{data.email1}</Typography>
+                  <Typography variant='body2'>{data.email}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
@@ -306,7 +330,19 @@ const ViewProfileLeft = ({ data }) => {
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Shift:
                   </Typography>
-                  <Typography variant='body2'>{data.shift}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={data.shift}
+                    color={shiftColors[data.shift]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
@@ -315,8 +351,8 @@ const ViewProfileLeft = ({ data }) => {
                   <CustomChip
                     skin='light'
                     size='small'
-                    label={data.legacy.toString()}
-                    color={booleanColors[data.legacy.toString()]}
+                    label={workDetailsLabel(data.legacy)}
+                    color={booleanColors[workDetailsLabel(data.legacy)]}
                     sx={{
                       height: 20,
                       fontSize: '0.75rem',
@@ -330,61 +366,181 @@ const ViewProfileLeft = ({ data }) => {
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Labour:
                   </Typography>
-                  <Typography variant='body2'>{data.labour}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.labour)}
+                    color={booleanColors[workDetailsLabel(data.labour)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Crew Parking:
                   </Typography>
-                  <Typography variant='body2'>{data.email}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.crewParking)}
+                    color={booleanColors[workDetailsLabel(data.crewParking)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Basecamp:
                   </Typography>
-                  <Typography variant='body2'>{data.baseCamp}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.baseCamp)}
+                    color={booleanColors[workDetailsLabel(data.baseCamp)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Travel:
                   </Typography>
-                  <Typography variant='body2'>{data.travel}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.travel)}
+                    color={booleanColors[workDetailsLabel(data.travel)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Requested:
                   </Typography>
-                  <Typography variant='body2'>{data.requested}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.requested)}
+                    color={booleanColors[workDetailsLabel(data.requested)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     On Set:
                   </Typography>
-                  <Typography variant='body2'>{data.set}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.set)}
+                    color={booleanColors[workDetailsLabel(data.set)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Priority List:
                   </Typography>
-                  <Typography variant='body2'>{data.andyPriorityList}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.andyPriorityList)}
+                    color={booleanColors[workDetailsLabel(data.andyPriorityList)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Needs Potty:
                   </Typography>
-                  <Typography variant='body2'>{data.needsPotty}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.needsPotty)}
+                    color={booleanColors[workDetailsLabel(data.needsPotty)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Burned:
                   </Typography>
-                  <Typography variant='body2'>{data.burned}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.burned)}
+                    color={booleanColors[workDetailsLabel(data.burned)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Do Not Book:
                   </Typography>
-                  <Typography variant='body2'>{data.doNotBook}</Typography>
+                  <CustomChip
+                    skin='light'
+                    size='small'
+                    label={workDetailsLabel(data.doNotBook)}
+                    color={booleanColors[workDetailsLabel(data.doNotBook)]}
+                    sx={{
+                      height: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      borderRadius: '5px',
+                      textTransform: 'capitalize'
+                    }}
+                  />
                 </Box>
               </Box>
             </CardContent>
@@ -453,8 +609,8 @@ const ViewProfileLeft = ({ data }) => {
                             onBlur={onBlur}
                             onChange={onChange}
                             error={Boolean(errors.legacy)}
-                            control={<Switch defaultChecked />}
-                            label='Legacy employee'
+                            control={<Switch />}
+                            label='Legacy Employee'
                           />
                         )}
                       />
@@ -463,7 +619,182 @@ const ViewProfileLeft = ({ data }) => {
                       )}
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <FormControlLabel control={<Switch defaultChecked />} label='Email me when someone' />
+                      <Controller
+                        name='crewParking'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.crewParking)}
+                            control={<Switch />}
+                            label='Crew Parking'
+                          />
+                        )}
+                      />
+                      {errors.crewParking && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.crewParking.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='baseCamp'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.baseCamp)}
+                            control={<Switch />}
+                            label='Base Camp'
+                          />
+                        )}
+                      />
+                      {errors.baseCamp && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.baseCamp.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='travel'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.travel)}
+                            control={<Switch />}
+                            label='Travel'
+                          />
+                        )}
+                      />
+                      {errors.travel && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.travel.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='requested'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.requested)}
+                            control={<Switch />}
+                            label='Requested'
+                          />
+                        )}
+                      />
+                      {errors.requested && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.requested.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='set'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.set)}
+                            control={<Switch />}
+                            label='Set Floater'
+                          />
+                        )}
+                      />
+                      {errors.set && <FormHelperText sx={{ color: 'error.main' }}>{errors.set.message}</FormHelperText>}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='andyPriorityList'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.andyPriorityList)}
+                            control={<Switch />}
+                            label='Priority List'
+                          />
+                        )}
+                      />
+                      {errors.andyPriorityList && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.andyPriorityList.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='needsPotty'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.needsPotty)}
+                            control={<Switch />}
+                            label='Needs Potty'
+                          />
+                        )}
+                      />
+                      {errors.needsPotty && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.needsPotty.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='burned'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.burned)}
+                            control={<Switch />}
+                            label='Burned'
+                          />
+                        )}
+                      />
+                      {errors.burned && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.burned.message}</FormHelperText>
+                      )}
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='doNotBook'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <FormControlLabel
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.doNotBook)}
+                            control={<Switch />}
+                            label='Do Not Book'
+                          />
+                        )}
+                      />
+                      {errors.doNotBook && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.doNotBook.message}</FormHelperText>
+                      )}
                     </Grid>
                   </Grid>
                   <DialogActions sx={{ justifyContent: 'center', mt: 10 }}>

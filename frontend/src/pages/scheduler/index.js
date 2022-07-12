@@ -1,5 +1,5 @@
 // ** React Imports
-import * as React from 'react'
+import { useState, useEffect } from 'react'
 
 // ** Context Imports
 
@@ -28,8 +28,8 @@ import toast from 'react-hot-toast'
 import * as yup from 'yup'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
-import UserAvailabilityTable from 'src/views/table/data-grid/UserAvailabilityTable'
-import { getLocalStorage } from 'src/hooks/helpers'
+import UserAvailabilitySchedulerTable from 'src/views/table/data-grid/UserAvailabilitySchedulerTable'
+import { getLocalStorage, isAuth } from 'src/hooks/helpers'
 
 const defaultValues = {
   shift: '',
@@ -38,7 +38,7 @@ const defaultValues = {
 
 const SchedulerPage = () => {
   // ** State
-  const [openPlans, setOpenPlans] = React.useState(false)
+  const [openPlans, setOpenPlans] = useState(false)
 
   // Handle Upgrade Plan dialog
   const handlePlansClickOpen = () => setOpenPlans(true)
@@ -106,6 +106,7 @@ const SchedulerPage = () => {
               render={({ field: { value, onChange, onBlur } }) => (
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <StaticDatePicker
+                    disablePast
                     value={value}
                     onBlur={onBlur}
                     onChange={e => {
@@ -186,7 +187,7 @@ const SchedulerPage = () => {
       </Grid>
       <Grid item md={7.5} xs={12}>
         <Card>
-          <UserAvailabilityTable />
+          <UserAvailabilitySchedulerTable />
         </Card>
       </Grid>
     </Grid>

@@ -187,7 +187,7 @@ const columns = [
     field: 'actions',
     headerName: 'View',
     renderCell: ({ row }) => (
-      <Link href={`/apps/user/view/${row.id}`} passHref>
+      <Link href={`/view-profile/${row._id}`} passHref>
         <IconButton>
           <EyeOutline />
         </IconButton>

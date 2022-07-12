@@ -23,6 +23,7 @@ import MobileDatePicker from '@mui/lab/MobileDatePicker'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import DatePicker from '@mui/lab/DatePicker'
+import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup, styled } from '@mui/material'
 
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
@@ -31,17 +32,47 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 // ** Custom Components Imports
 import StepperCustomDot from './StepperCustomDot'
 
+// ** Config
+import authConfig from 'src/configs/auth'
+
 // ** Third Party Imports
 import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import axios from 'axios'
-import { getLocalStorage } from 'src/hooks/helpers'
+import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import uploadFile from 'src/configs/firebase/uploadFile'
+import { v4 as uuidv4 } from 'uuid'
 
 // ** Styled Component
 import StepperWrapper from 'src/@core/styles/mui/stepper'
-import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/material'
+import { useRouter } from 'next/router'
+
+// ** Styled Components
+const ImgStyled = styled('img')(({ theme }) => ({
+  width: 120,
+  height: 120,
+  marginRight: theme.spacing(5),
+  borderRadius: theme.shape.borderRadius
+}))
+
+const ButtonStyled = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    textAlign: 'center'
+  }
+}))
+
+const ResetButtonStyled = styled(Button)(({ theme }) => ({
+  marginLeft: theme.spacing(4),
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    marginLeft: 0,
+    textAlign: 'center',
+    marginTop: theme.spacing(4)
+  }
+}))
 
 const steps = [
   {
@@ -66,22 +97,29 @@ const defaultValues = {
   phone2: '',
   email1: '',
   email2: '',
-  since: new Date(),
-  streetAddress: '',
+  address: '',
   postalCode: '',
   city: '',
   province: '',
   country: '',
   shift: '',
   labour: '',
+  travel: '',
   vehicle: ''
 }
 
 const OnboaringForm = () => {
   // ** States
-  const [activeStep, setActiveStep] = useState(0)
   const [typeSubmit, setTypeSubmit] = useState('button')
+  const [activeStep, setActiveStep] = useState(0)
   const [basicPicker, setBasicPicker] = useState(new Date())
+  const [imgSrc, setImgSrc] = useState('/images/avatars/9.jpeg')
+  const [newPhoto, setNewPhoto] = useState()
+
+  // ** Auth variables
+  const auth = isAuth()
+  const currentUser = auth
+  const router = useRouter()
 
   // Tokenization for server request
   const storageChecked = getLocalStorage('accessToken')
@@ -99,6 +137,15 @@ const OnboaringForm = () => {
     }
   }
 
+  const onChange = e => {
+    const file = e.target.files[0]
+    if (file) {
+      setImgSrc(file)
+      const photoURL = URL.createObjectURL(file)
+      setNewPhoto(photoURL)
+    }
+  }
+
   // YUP validation rules
   const schema = yup.object().shape({
     firstName: yup.string().required(),
@@ -108,14 +155,15 @@ const OnboaringForm = () => {
     phone2: yup.string().required(),
     email1: yup.string().email().required(),
     email2: yup.string().email().required(),
-    streetAddress: yup.string().required(),
+    address: yup.string().required(),
     city: yup.string().required(),
     province: yup.string().required(),
     postalCode: yup.string().required(),
     country: yup.string().required(),
     shift: yup.string().required(),
     labour: yup.boolean().required(),
-    vehicle: yup.boolean().required()
+    vehicle: yup.boolean().required(),
+    travel: yup.boolean().required()
   })
 
   // React Hook controller
@@ -131,57 +179,87 @@ const OnboaringForm = () => {
   })
 
   // Handle form submit
-  const onSubmit = data => {
-    const {
-      firstName,
-      lastName,
-      nickName,
-      phone1,
-      phone2,
-      email1,
-      email2,
-      streetAddress,
-      city,
-      province,
-      postalCode,
-      country,
-      shift,
-      labour,
-      vehicle
-    } = data
+  const onSubmit = async data => {
+    const file = imgSrc
+    if (file) {
+      // define all variables to send to backend
+      const since = basicPicker
+      const imageName = uuidv4() + '.' + file
+      const photoURL = await uploadFile(file, `profile/${currentUser._id}/${imageName}`)
 
-    axios({
-      method: 'PUT',
-      url: 'http://localhost:8000/api/user/update',
-      data: {
-        firstName,
-        lastName,
-        nickName,
-        phone1,
-        phone2,
-        email1,
-        email2,
-        streetAddress,
-        city,
-        province,
-        postalCode,
-        country,
-        shift,
-        labour,
-        vehicle
-      },
-      headers: {
-        Authorization: `Bearer ${storageChecked}`
+      if (photoURL) {
+        const {
+          firstName,
+          lastName,
+          nickName,
+          phone1,
+          phone2,
+          email1,
+          email2,
+          address,
+          city,
+          province,
+          postalCode,
+          country,
+          shift,
+          labour,
+          vehicle,
+          travel
+        } = data
+
+        axios({
+          method: 'PUT',
+          url: 'http://localhost:8000/api/user/update',
+          data: {
+            firstName,
+            lastName,
+            nickName,
+            since,
+            phone1,
+            phone2,
+            email1,
+            email2,
+            address,
+            city,
+            province,
+            postalCode,
+            country,
+            shift,
+            labour,
+            travel,
+            vehicle,
+            photoURL
+          },
+          headers: {
+            Authorization: `Bearer ${storageChecked}`
+          }
+        })
+          .then(async res => {
+            window.localStorage.removeItem('userData')
+            window.localStorage.removeItem(authConfig.storageTokenKeyName)
+            window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
+            console.log('THE RESP', res.data)
+          })
+          .then(() => {
+            axios
+              .get(authConfig.meEndpoint, {
+                headers: {
+                  Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
+                }
+              })
+              .then(async response => {
+                window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
+                console.log('onboarding success', response)
+                toast.success('You have been successfully onboarded!')
+                router.push('/')
+              })
+              .catch(error => {
+                console.log('onboarding ERROR', error.data)
+                toast.error('Onboarding failed. Please try again!')
+              })
+          })
       }
-    })
-      .then(response => {
-        console.log('signup success', response)
-        toast.success('Employee Onboarded!')
-      })
-      .catch(error => {
-        console.log('Signup ERROR', error.response.data)
-        toast.error('Employee Onboarding failed')
-      })
+    }
   }
 
   const getStepContent = step => {
@@ -189,6 +267,40 @@ const OnboaringForm = () => {
       case 0:
         return (
           <Fragment>
+            <Grid container sx={{ paddingRight: 5, paddingLeft: 5 }}>
+              <Grid item xs={12} sx={{ my: 5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {newPhoto ? (
+                    <ImgStyled src={newPhoto} alt='Profile Pic' />
+                  ) : (
+                    <ImgStyled src={imgSrc} alt='Profile Pic' />
+                  )}
+                  {/* <ImgStyled src={photoURL} alt='Profile Pic' /> */}
+                  <Box>
+                    <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
+                      Upload New Photo
+                      <input
+                        hidden
+                        type='file'
+                        onChange={onChange}
+                        accept='image/png, image/jpeg, application/pdf'
+                        id='account-settings-upload-image'
+                      />
+                    </ButtonStyled>
+                    <ResetButtonStyled
+                      color='error'
+                      variant='outlined'
+                      onClick={() => setImgSrc('/images/avatars/1.png')}
+                    >
+                      Reset
+                    </ResetButtonStyled>
+                    <Typography sx={{ mt: 4 }} component='p' variant='caption'>
+                      Allowed PNG or JPEG. Max size of 800K.
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
                 name='firstName'
@@ -260,7 +372,6 @@ const OnboaringForm = () => {
                 <MobileDatePicker
                   label='Season Start Date'
                   value={basicPicker}
-                  sx={{ width: '10px' }}
                   onChange={newValue => setBasicPicker(newValue)}
                   renderInput={params => <TextField fullWidth {...params} />}
                 />
@@ -355,7 +466,7 @@ const OnboaringForm = () => {
           <Fragment key={step}>
             <Grid item xs={12} sm={6}>
               <Controller
-                name='streetAddress'
+                name='address'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
@@ -363,7 +474,7 @@ const OnboaringForm = () => {
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
-                    error={Boolean(errors.streetAddress)}
+                    error={Boolean(errors.address)}
                     required
                     fullWidth
                     label='Street Address'
@@ -371,9 +482,7 @@ const OnboaringForm = () => {
                   />
                 )}
               />
-              {errors.streetAddress && (
-                <FormHelperText sx={{ color: 'error.main' }}>{errors.streetAddress.message}</FormHelperText>
-              )}
+              {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{errors.address.message}</FormHelperText>}
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
@@ -556,9 +665,7 @@ const OnboaringForm = () => {
             </Grid>
             <Grid item xs={12} sm={12}>
               <FormControl sx={{ padding: '10px' }}>
-                <FormLabel id='demo-radio-buttons-group-label'>
-                  Do you have a car and are willing to drive long distances? *
-                </FormLabel>
+                <FormLabel id='demo-radio-buttons-group-label'>Do you own or have a car to drive to work? *</FormLabel>
                 <Controller
                   name='vehicle'
                   control={control}
@@ -582,6 +689,32 @@ const OnboaringForm = () => {
                 {errors.vehicle && (
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.vehicle.message}</FormHelperText>
                 )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <FormControl sx={{ padding: '10px' }}>
+                <FormLabel id='demo-radio-buttons-group-label'>Are you willing to drive long distances? *</FormLabel>
+                <Controller
+                  name='travel'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <RadioGroup
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={Boolean(errors.travel)}
+                      aria-labelledby='demo-radio-buttons-group-label'
+                      defaultValue='female'
+                      name='radio-buttons-group'
+                      sx={{ padding: '20px' }}
+                    >
+                      <FormControlLabel value={true} control={<Radio />} label='Yes, I can travel far distances' />
+                      <FormControlLabel value={false} control={<Radio />} label="No, I can't travel far distances" />
+                    </RadioGroup>
+                  )}
+                />
+                {errors.travel && <FormHelperText sx={{ color: 'error.main' }}>{errors.travel.message}</FormHelperText>}
               </FormControl>
             </Grid>
           </Fragment>
@@ -617,13 +750,7 @@ const OnboaringForm = () => {
             </Grid>
             {getStepContent(activeStep)}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button
-                size='large'
-                variant='outlined'
-                color='secondary'
-                disabled={activeStep === 0}
-                onClick={handleBack}
-              >
+              <Button size='large' variant='contained' disabled={activeStep === 0} onClick={handleBack}>
                 Back
               </Button>
               {/* {activeStep === steps.length - 1 ? (
@@ -635,12 +762,18 @@ const OnboaringForm = () => {
                   Next
                 </Button>
               )} */}
-              <Button size='large' variant='contained' type='Submit' disabled={activeStep === 1}>
+              <Button size='large' variant='contained' type='Submit' disabled={activeStep === 0 - 1}>
                 Submit
               </Button>
 
-              <Button size='large' variant='contained' type={typeSubmit} onClick={handleNext}>
-                {/* {activeStep === steps.length - 1 ? 'Submit' : 'Next'} */}Next
+              <Button
+                size='large'
+                variant='contained'
+                type={typeSubmit}
+                onClick={handleNext}
+                disabled={activeStep === 2}
+              >
+                Next
               </Button>
             </Grid>
           </Grid>

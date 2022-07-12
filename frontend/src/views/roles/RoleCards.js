@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Avatar from '@mui/material/Avatar'
@@ -23,20 +23,51 @@ import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { getLocalStorage } from 'src/hooks/helpers'
+import { CosineWave } from 'mdi-material-ui'
 
 // ** Icons Imports
-
-const cardData = [
-  { totalUsers: 4, title: 'Administrators', avatars: ['1.png', '2.png', '3.png', '4.png'] },
-  { totalUsers: 5, title: 'Users', avatars: ['4.png', '5.png', '6.png', '7.png', '8.png'] }
-]
 
 const RolesCards = () => {
   // ** States
   const [open, setOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('Add')
+  const [numAdmin, setNumAdmin] = useState([])
+  const [numUsers, setNumUsers] = useState([])
 
   // ** Hooks
+  useEffect(() => {
+    getAdmins()
+    getUsers()
+  }, [])
+
+  const getAdmins = async () => {
+    const response = await axios({
+      method: 'GET',
+      url: 'http://localhost:8000/api/users/admins',
+      headers: {
+        Authorization: `Bearer ${storageChecked}`
+      }
+    })
+    if (response.status === 200) {
+      setNumAdmin(response.data.result)
+    }
+  }
+
+  const getUsers = async () => {
+    const response = await axios({
+      method: 'GET',
+      url: 'http://localhost:8000/api/users/users',
+      headers: {
+        Authorization: `Bearer ${storageChecked}`
+      }
+    })
+    if (response.status === 200) {
+      setNumUsers(response.data.result)
+    }
+  }
+
+  const numOfAdmins = numAdmin.length
+  const numOfUsers = numUsers.length
 
   // Tokenization for server request
   const storageChecked = getLocalStorage('accessToken')
@@ -74,6 +105,11 @@ const RolesCards = () => {
         toast.error('Employee Onboarding failed')
       })
   }
+
+  const cardData = [
+    { totalUsers: numOfAdmins, title: 'Administrators', avatars: ['1.png', '2.png', '3.png', '4.png'] },
+    { totalUsers: numOfUsers, title: 'Users', avatars: ['5.png', '8.png', '6.png', '7.png'] }
+  ]
 
   const renderCards = () =>
     cardData.map((item, index) => (

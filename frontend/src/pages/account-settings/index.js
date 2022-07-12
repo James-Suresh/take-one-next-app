@@ -62,29 +62,11 @@ const AccountSettings = () => {
           sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
         >
           <Tab
-            value='avatar'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <AccountOutline sx={{ fontSize: '1.125rem' }} />
-                <TabName>Avatar</TabName>
-              </Box>
-            }
-          />
-          <Tab
             value='account'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <AccountOutline sx={{ fontSize: '1.125rem' }} />
                 <TabName>Account</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='security'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOpenOutline sx={{ fontSize: '1.125rem' }} />
-                <TabName>Security</TabName>
               </Box>
             }
           />
@@ -97,44 +79,25 @@ const AccountSettings = () => {
               </Box>
             }
           />
-          {/* <Tab
-            value='billing'
+          <Tab
+            value='security'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <BookmarkOutline sx={{ fontSize: '1.125rem' }} />
-                <TabName>Billing</TabName>
+                <LockOpenOutline sx={{ fontSize: '1.125rem' }} />
+                <TabName>Security</TabName>
               </Box>
             }
-          /> */}
-          {/* <Tab
-            value='notifications'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <BellOutline sx={{ fontSize: '1.125rem' }} />
-                <TabName>Notifications</TabName>
-              </Box>
-            }
-          /> */}
+          />
         </TabList>
-
-        <TabPanel sx={{ p: 0 }} value='avatar'>
-          <TabAvatar />
-        </TabPanel>
         <TabPanel sx={{ p: 0 }} value='account'>
           <TabAccount />
+        </TabPanel>
+        <TabPanel sx={{ p: 0 }} value='work info'>
+          <TabInfo />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='security'>
           <TabSecurity />
         </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo />
-        </TabPanel>
-        {/* <TabPanel sx={{ p: 0 }} value='billing'>
-          <TabBilling />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='notifications'>
-          <TabNotifications />
-        </TabPanel> */}
       </TabContext>
     </Card>
   )

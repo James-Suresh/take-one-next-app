@@ -18,10 +18,11 @@ import BookmarkOutline from 'mdi-material-ui/BookmarkOutline'
 
 // ** Demo Components Imports
 import UserViewBilling from 'src/views/user/view/UserViewBilling'
-import UserViewOverview from 'src/views/user/view/UserViewOverview'
+import ViewProfileOverview from 'src/views/user/view/ViewProfileOverview'
 import UserViewSecurity from 'src/views/user/view/UserViewSecurity'
 import UserViewConnection from 'src/views/user/view/UserViewConnection'
 import UserViewNotification from 'src/views/user/view/UserViewNotification'
+import UserViewOverview from './UserViewOverview'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)(({ theme }) => ({
@@ -33,7 +34,7 @@ const Tab = styled(MuiTab)(({ theme }) => ({
   }
 }))
 
-const UserViewRight = ({ invoiceData }) => {
+const ViewProfileRight = ({ data }) => {
   // ** State
   const [value, setValue] = useState('overview')
 
@@ -52,21 +53,17 @@ const UserViewRight = ({ invoiceData }) => {
       >
         <Tab value='overview' label='Overview' icon={<AccountOutline sx={{ fontSize: '18px' }} />} />
         <Tab value='security' label='Security' icon={<LockOutline sx={{ fontSize: '18px' }} />} />
-        <Tab value='notification' label='Notification' icon={<BellOutline sx={{ fontSize: '18px' }} />} />
       </TabList>
       <Box sx={{ mt: 3 }}>
         <TabPanel sx={{ p: 0 }} value='overview'>
-          <UserViewOverview invoiceData={invoiceData} />
+          <UserViewOverview viewedUser={data} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='security'>
           <UserViewSecurity />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='notification'>
-          <UserViewNotification />
         </TabPanel>
       </Box>
     </TabContext>
   )
 }
 
-export default UserViewRight
+export default ViewProfileRight

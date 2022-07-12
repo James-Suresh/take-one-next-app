@@ -49,6 +49,14 @@ const UseBgColor = () => {
       color: theme.palette.warning.main,
       backgroundColor: hexToRGBA(theme.palette.warning.main, 0.12)
     },
+    yeildFilled: {
+      color: theme.palette.yeild.contrastText,
+      backgroundColor: theme.palette.yeild.main
+    },
+    yeildLight: {
+      color: theme.palette.yeild.main,
+      backgroundColor: hexToRGBA(theme.palette.yeild.main, 0.12)
+    },
     infoFilled: {
       color: theme.palette.info.contrastText,
       backgroundColor: theme.palette.info.main

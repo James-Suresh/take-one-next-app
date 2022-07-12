@@ -25,46 +25,7 @@ import FileUploaderMultipleDealMemo from '../form-elements/file-uploader/FileUpl
 import axios from 'axios'
 import { getLocalStorage } from 'src/hooks/helpers'
 import uploadFile from 'src/configs/firebase/uploadFile'
-
-// ** React Imports
-import { Fragment } from 'react'
-
-// ** MUI Imports
-import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import { styled } from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
-
-// ** Icons Imports
-import Close from 'mdi-material-ui/Close'
-import FileDocumentOutline from 'mdi-material-ui/FileDocumentOutline'
-
-// ** Third Party Imports
-import { useDropzone } from 'react-dropzone'
-import { v4 as uuidv4 } from 'uuid'
-
-// Styled component for the upload image inside the dropzone area
-const Img = styled('img')(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    marginRight: theme.spacing(10)
-  },
-  [theme.breakpoints.down('md')]: {
-    marginBottom: theme.spacing(4)
-  },
-  [theme.breakpoints.down('sm')]: {
-    width: 250
-  }
-}))
-
-// Styled component for the heading inside the dropzone area
-const HeadingTypography = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(5),
-  [theme.breakpoints.down('sm')]: {
-    marginBottom: theme.spacing(4)
-  }
-}))
+import FileUploaderSingle from '../form-elements/file-uploader/FileUploaderSingle'
 
 // const CustomInput = forwardRef((props, ref) => {
 //   return <TextField fullWidth {...props} inputRef={ref} label='Season Start Date' autoComplete='off' />
@@ -76,40 +37,16 @@ const defaultValues = {
   seasonStartDate: '',
   payrollPhone: '',
   payrollEmail: '',
-  onboardingURL: ''
+  onboardingLink: ''
 }
 
 const FormLayoutsDealMemo = () => {
   // ** States
   const [date, setDate] = useState(null)
   const [basicPicker, setBasicPicker] = useState(new Date())
-  const [files, setFiles] = useState([])
-  const [submit, setSubmit] = useState('Submit')
 
   // Tokenization for server request
   const storageChecked = getLocalStorage('accessToken')
-
-  // ** Hooks
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: acceptedFiles => {
-      setFiles(acceptedFiles)
-      console.log(Object.values(acceptedFiles)[0])
-    }
-  })
-
-  const handleLinkClick = event => {
-    event.preventDefault()
-  }
-
-  const handleRemoveAllFiles = () => {
-    setFiles([])
-  }
-
-  const handleRemoveFile = file => {
-    const uploadedFiles = files
-    const filtered = uploadedFiles.filter(i => i.name !== file.name)
-    setFiles([...filtered])
-  }
 
   function refreshPage() {
     window.location.reload()
@@ -137,17 +74,14 @@ const FormLayoutsDealMemo = () => {
   })
 
   // Handle form submit
-  const onSubmit = async data => {
-    setSubmit('submitting data')
-    const file = Object.values(files)[0]
-    const { showName, season, seasonStartDate, payrollPhone, payrollEmail, onboardingURL } = data
+  const onSubmit = async (data, fileSrc) => {
+    const file = fileSrc
     if (file) {
-      console.log(file)
       const fileName = uuidv4() + '.' + file
       const fileURL = await uploadFile(file, `dealmemo/${fileName}`)
       if (fileURL) {
         const dealMemoURL = fileURL
-        console.log(dealMemoURL)
+        const { showName, season, seasonStartDate, payrollPhone, payrollEmail, onboardingLink } = data
 
         axios({
           method: 'POST',
@@ -158,7 +92,7 @@ const FormLayoutsDealMemo = () => {
             seasonStartDate,
             payrollPhone,
             payrollEmail,
-            onboardingURL,
+            onboardingLink,
             dealMemoURL
           },
           headers: {
@@ -167,9 +101,7 @@ const FormLayoutsDealMemo = () => {
         })
           .then(response => {
             console.log('signup success', response)
-            setSubmit('submit')
             toast.success('New deal memo added!')
-            refreshPage()
           })
           .catch(error => {
             console.log('Signup ERROR', error.response.data)
@@ -177,59 +109,7 @@ const FormLayoutsDealMemo = () => {
           })
       }
     }
-    axios({
-      method: 'POST',
-      url: 'http://localhost:8000/api/dealmemo/create/new',
-      data: {
-        showName,
-        season,
-        seasonStartDate,
-        payrollPhone,
-        payrollEmail,
-        onboardingURL
-      },
-      headers: {
-        Authorization: `Bearer ${storageChecked}`
-      }
-    })
-      .then(response => {
-        console.log('signup success', response)
-        setSubmit('submit')
-        toast.success('New deal memo added!')
-        refreshPage()
-      })
-      .catch(error => {
-        console.log('Signup ERROR', error.response.data)
-        toast.error('Failed to create new deal memo. Please try again.')
-      })
   }
-
-  const renderFilePreview = file => {
-    // if (file.type.startsWith('image')) {
-    //   return <img width={38} height={38} alt={file.name} src={URL.createObjectURL(file)} />
-    // } else {
-    return <FileDocumentOutline />
-    // }
-  }
-
-  const fileList = files.map(file => (
-    <ListItem key={file.name}>
-      <div className='file-details'>
-        <div className='file-preview'>{renderFilePreview(file)}</div>
-        <div>
-          <Typography className='file-name'>{file.name}</Typography>
-          <Typography className='file-size' variant='body2'>
-            {Math.round(file.size / 100) / 10 > 1000
-              ? `${(Math.round(file.size / 100) / 10000).toFixed(1)} mb`
-              : `${(Math.round(file.size / 100) / 10).toFixed(1)} kb`}
-          </Typography>
-        </div>
-      </div>
-      <IconButton onClick={() => handleRemoveFile(file)}>
-        <Close fontSize='small' />
-      </IconButton>
-    </ListItem>
-  ))
 
   return (
     <Card>
@@ -349,7 +229,7 @@ const FormLayoutsDealMemo = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
-                name='onboardingURL'
+                name='onboardingLink'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
@@ -357,15 +237,15 @@ const FormLayoutsDealMemo = () => {
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
-                    error={Boolean(errors.onboardingURL)}
+                    error={Boolean(errors.onboardingLink)}
                     fullWidth
                     label='Onboarding Link'
                     placeholder='Leave empty if none'
                   />
                 )}
               />
-              {errors.onboardingURL && (
-                <FormHelperText sx={{ color: 'error.main' }}>{errors.onboardingURL.message}</FormHelperText>
+              {errors.onboardingLink && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.onboardingLink.message}</FormHelperText>
               )}
             </Grid>
           </Grid>
@@ -377,52 +257,14 @@ const FormLayoutsDealMemo = () => {
               <Typography variant='body2' sx={{ fontWeight: 600, paddingBottom: '25px' }}>
                 2. Deal Memo File Upload
               </Typography>
-              <div
-                {...getRootProps({ className: 'dropzone' })}
-                style={{
-                  border: '2px solid #DBDBDB',
-                  borderStyle: 'dashed',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  padding: '25px',
-                  borderRadius: '10px'
-                }}
-              >
-                <input {...getInputProps()} />
-                <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
-                  <Img width={300} alt='Upload img' src='/images/misc/upload.png' />
-                  <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
-                    <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
-                    <Typography color='textSecondary'>
-                      Drop files here or click{' '}
-                      <Link href='/' onClick={handleLinkClick}>
-                        browse
-                      </Link>{' '}
-                      thorough your machine
-                    </Typography>
-                  </Box>
-                </Box>
-              </div>
-              {files.length ? (
-                <Fragment>
-                  <List>{fileList}</List>
-                  <div className='buttons'>
-                    <Button color='error' variant='outlined' onClick={handleRemoveAllFiles}>
-                      Remove All
-                    </Button>
-                    <Button variant='contained' sx={{ margin: '20px' }}>
-                      Upload Files
-                    </Button>
-                  </div>
-                </Fragment>
-              ) : null}
+              <FileUploaderSingle />
             </Grid>
           </Grid>
         </CardContent>
         <Divider sx={{ m: 2 }} />
         <CardActions>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
-            {submit}
+            Submit
           </Button>
           <Button size='large' color='secondary' variant='outlined' onClick={refreshPage}>
             Cancel

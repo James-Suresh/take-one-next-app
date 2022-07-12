@@ -22,3 +22,20 @@ code:not([class*='language-']):after {
 code[class*='language-'] {
   padding: 0;
 }
+
+*::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: none;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #94f2fe;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #38daed;
+}

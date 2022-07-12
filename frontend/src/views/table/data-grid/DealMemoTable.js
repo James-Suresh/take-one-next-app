@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import { DataGrid } from '@mui/x-data-grid'
@@ -28,7 +29,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomAvatar from 'src/@core/components/mui/dealmemo-avatar'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
@@ -68,23 +69,20 @@ const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
   marginRight: theme.spacing(3)
 }))
 
+// const dealMemoLink = row => (row.dealMemoURL === null ? row.onboardingLink : row.dealMemoURL)
+
 // ** renders client column
 // const renderClient = row => {
-//   if (row.avatar.length) {
-//     return (
-//       <AvatarWithImageLink href={`/apps/user/view/${row.id}`}>
-//         <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 34, height: 34 }} />
-//       </AvatarWithImageLink>
-//     )
-//   } else {
-//     return (
-//       <AvatarWithoutImageLink href={`/apps/user/view/${row.id}`}>
-//         <CustomAvatar skin='light' color={row.avatarColor} sx={{ mr: 3, width: 34, height: 34, fontSize: '1rem' }}>
-//           {getInitials(row.fullName ? row.fullName : 'John Doe')}
-//         </CustomAvatar>
-//       </AvatarWithoutImageLink>
-//     )
-//   }
+//   const randomColor = '#000000'.replace(/0/g, function () {
+//     return (~~(Math.random() * 16)).toString(16)
+//   })
+//   console.log('randomColor', randomColor)
+
+//   return (
+//     <CustomAvatar skin='light' color={randomColor} sx={{ mr: 3, width: 34, height: 34, fontSize: '1rem' }}>
+//       {getInitials(row.showName ? row.showName : 'Show Name')}
+//     </CustomAvatar>
+//   )
 // }
 
 const columns = [
@@ -182,35 +180,28 @@ const columns = [
   //   }
   // },
   {
-    flex: 0.05,
-    minWidth: 60,
+    flex: 0.2,
+    minWidth: 130,
     sortable: false,
     field: 'actions',
-    headerName: 'PDF',
+    headerName: 'Link',
     renderCell: ({ row }) => (
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Link href={`/apps/user/view/${row.season}`} passHref>
-          <IconButton>
-            <PictureAsPdfRoundedIcon />
-          </IconButton>
-        </Link>
-      </Box>
-    )
-  },
-  {
-    flex: 0.1,
-    minWidth: 120,
-    sortable: false,
-    field: 'new field',
-    headerName: 'Onboarding',
-    renderCell: ({ row }) => (
-      <Box width={100} sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Link href={`/apps/user/view/${row.season}`} passHref>
-          <IconButton>
-            <AddCircleRoundedIcon />
-          </IconButton>
-        </Link>
-      </Box>
+      // <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <a
+        href={row.dealMemoURL === null ? row.onboardingURL : row.dealMemoURL}
+        target='_blank'
+        style={{ textDecoration: 'none' }}
+      >
+        <Button
+          size='small'
+          variant='contained'
+          color='primary'
+          // onClick={() => getFullName(params)}
+        >
+          Deal MEMO
+        </Button>
+      </a>
+      // </Box>
     )
   }
 ]

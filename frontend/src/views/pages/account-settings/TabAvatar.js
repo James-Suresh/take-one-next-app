@@ -58,13 +58,13 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(4)
   }
 }))
+// ** Hooks
+const auth = isAuth()
 
 const TabAccount = () => {
   // ** State
-  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
-
-  // ** Hooks
-  const auth = isAuth()
+  const [imgSrc, setImgSrc] = useState(auth.photoURL)
+  const [newPhoto, setNewPhoto] = useState()
 
   // Tokenization for server request
   const storageChecked = getLocalStorage('accessToken')
@@ -89,8 +89,9 @@ const TabAccount = () => {
   const onChange = e => {
     const file = e.target.files[0]
     if (file) {
-      // const photoURL = URL.createObjectURL(file)
       setImgSrc(file)
+      const photoURL = URL.createObjectURL(file)
+      setNewPhoto(photoURL)
     }
   }
   console.log(imgSrc)
@@ -135,7 +136,8 @@ const TabAccount = () => {
         <Grid container spacing={6}>
           <Grid item xs={12} sx={{ my: 5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <ImgStyled src={imgSrc} alt='Profile Pic' />
+              {newPhoto ? <ImgStyled src={newPhoto} alt='Profile Pic' /> : <ImgStyled src={imgSrc} alt='Profile Pic' />}
+              {/* <ImgStyled src={photoURL} alt='Profile Pic' /> */}
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   Upload New Photo
@@ -143,7 +145,7 @@ const TabAccount = () => {
                     hidden
                     type='file'
                     onChange={onChange}
-                    accept='image/png, image/jpeg'
+                    accept='image/png, image/jpeg, application/pdf'
                     id='account-settings-upload-image'
                   />
                 </ButtonStyled>
