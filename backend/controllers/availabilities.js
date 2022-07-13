@@ -48,6 +48,18 @@ exports.deleteAvalability = (req, res) => {
   AvailabilitiesSchema.deleteOne({ _id }).then(onSuccess).catch(onError);
 };
 
+// ----------------- DELETE REQUEST ----------------//
+// exports.deletePastAvalabilities = (req, res) => {
+//   const { authId } = req.params;
+
+//   const onSuccess = success(res);
+//   const onError = error(res);
+
+//   AvailabilitiesSchema.delete({ userId: authId && availabilityDate })
+//     .then(onSuccess)
+//     .catch(onError);
+// };
+
 // ----------------- UPDATE REQUEST ----------------//
 //   exports.updateAvalability = (req, res) => {
 //     const { _id } = req.params;

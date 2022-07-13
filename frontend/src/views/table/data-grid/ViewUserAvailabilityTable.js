@@ -47,7 +47,7 @@ import { useDispatch } from 'react-redux'
 // }
 
 const shiftObj = {
-  Day: { title: 'Day Shift', color: 'warning' },
+  Day: { title: 'Day Shift', color: 'yeild' },
   Night: { title: 'Night Shift', color: 'primary' }
 }
 

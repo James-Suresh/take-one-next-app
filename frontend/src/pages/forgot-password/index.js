@@ -19,6 +19,9 @@ import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+import { useState } from 'react'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 // Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -33,10 +36,33 @@ const TypographyStyled = styled(Typography)(({ theme }) => ({
 }))
 
 const ForgotPassword = () => {
-  // ** Hooks
+  // ** State
+  const [email, setEmail] = useState('')
+  const [submit, setSubmit] = useState('send reset link')
+
+  const handleChange = event => {
+    setEmail(event.target.value)
+  }
 
   const handleSubmit = e => {
     e.preventDefault()
+    setSubmit('sending...')
+    axios({
+      method: 'PUT',
+      url: `http://localhost:8000/api/forgot-password`,
+      data: { email }
+    })
+      .then(response => {
+        console.log('FORGOT PASSWORD SUCCESS', response)
+        setSubmit('send reset link')
+        toast.success(response.data.message)
+        // setValues({ ...values, buttonText: 'Requested' })
+      })
+      .catch(error => {
+        console.log('FORGOT PASSWORD ERROR', error.response.data)
+        toast.error(error.response.data.error)
+        // setValues({ ...values, buttonText: 'Request password reset link' })
+      })
   }
 
   return (
@@ -56,9 +82,9 @@ const ForgotPassword = () => {
             </Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-            <TextField autoFocus type='email' label='Email' sx={{ display: 'flex', mb: 4 }} />
+            <TextField autoFocus type='email' label='Email' sx={{ display: 'flex', mb: 4 }} onChange={handleChange} />
             <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 5.25 }}>
-              Send reset link
+              {submit}
             </Button>
             <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Link passHref href='/login'>

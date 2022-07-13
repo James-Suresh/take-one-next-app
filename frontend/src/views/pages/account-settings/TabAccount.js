@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -72,29 +72,26 @@ const defaultValues = {
 }
 
 // ** Auth variables
-const auth = isAuth()
-const currentUser = auth
+// const auth = isAuth()
+// const currentUser = auth
 
-const TabAccount = () => {
+const TabAccount = ({ data }) => {
   // ** State
   // const [openAlert, setOpenAlert] = useState(true)
   const [basicPicker, setBasicPicker] = useState(new Date())
-  const [imgSrc, setImgSrc] = useState(auth.photoURL)
+  const [imgSrc, setImgSrc] = useState(data.photoURL)
   const [newPhoto, setNewPhoto] = useState()
   const [submit, setSubmit] = useState('save changes')
 
   // ** Hooks
   const router = useRouter()
 
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
-
   const onChange = e => {
     const file = e.target.files[0]
     if (file) {
       setImgSrc(file)
-      const photoURL = URL.createObjectURL(file)
-      setNewPhoto(photoURL)
+      const newPhotoURL = URL.createObjectURL(file)
+      setNewPhoto(newPhotoURL)
     }
   }
 
@@ -112,7 +109,6 @@ const TabAccount = () => {
   // React Hook controller
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -129,7 +125,7 @@ const TabAccount = () => {
       // define all variables to send to backend
       const since = basicPicker
       const imageName = uuidv4() + '.' + file
-      const photoURL = await uploadFile(file, `profile/${currentUser._id}/${imageName}`)
+      const photoURL = await uploadFile(file, `profile/${data._id}/${imageName}`)
       const { firstName, lastName, nickName, phone1, phone2, email1, email2 } = data
 
       if (photoURL) {
@@ -184,7 +180,7 @@ const TabAccount = () => {
                     id='account-settings-upload-image'
                   />
                 </ButtonStyled>
-                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
+                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/9.jpeg')}>
                   Reset
                 </ResetButtonStyled>
                 <Typography sx={{ mt: 4 }} component='p' variant='caption'>

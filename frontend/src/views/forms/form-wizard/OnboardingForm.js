@@ -290,7 +290,7 @@ const OnboaringForm = () => {
                     <ResetButtonStyled
                       color='error'
                       variant='outlined'
-                      onClick={() => setImgSrc('/images/avatars/1.png')}
+                      onClick={() => setImgSrc('/images/avatars/9.jpeg')}
                     >
                       Reset
                     </ResetButtonStyled>

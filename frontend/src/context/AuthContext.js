@@ -63,9 +63,7 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const handleLogin = (params, errorCallback) => {
-    console.log('running')
     const { email, password } = params
-    console.log('login info', { email, password })
     axios({
       method: 'POST',
       url: 'http://localhost:8000/api/signin',

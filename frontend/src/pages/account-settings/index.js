@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -19,14 +19,13 @@ import InformationOutline from 'mdi-material-ui/InformationOutline'
 
 // ** Demo Tabs Imports
 import TabInfo from 'src/views/pages/account-settings/TabInfo'
-import TabAvatar from 'src/views/pages/account-settings/TabAvatar'
-import TabAccount from 'src/views/pages/account-settings/TabAccount'
-import TabBilling from 'src/views/pages/account-settings/TabBilling'
+import TabAccountData from 'src/views/pages/account-settings/TabAccountData'
 import TabSecurity from 'src/views/pages/account-settings/TabSecurity'
-import TabNotifications from 'src/views/pages/account-settings/TabNotifications'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import axios from 'axios'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -48,6 +47,9 @@ const TabName = styled('span')(({ theme }) => ({
 const AccountSettings = () => {
   // ** State
   const [value, setValue] = useState('account')
+
+  // ** Auth variables
+  const id = isAuth()._id
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -71,7 +73,7 @@ const AccountSettings = () => {
             }
           />
           <Tab
-            value='info'
+            value='work info'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <InformationOutline sx={{ fontSize: '1.125rem' }} />
@@ -90,7 +92,7 @@ const AccountSettings = () => {
           />
         </TabList>
         <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount />
+          <TabAccountData id={id} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='work info'>
           <TabInfo />

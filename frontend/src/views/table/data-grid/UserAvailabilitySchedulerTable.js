@@ -34,14 +34,16 @@ const UserAvailabilityTable = () => {
   const [hideNameColumn, setHideNameColumn] = useState(false)
   const [data, setData] = React.useState([])
 
+  const authId = isAuth()._id
+
   // Tokenization for server request
   const storageChecked = getLocalStorage('accessToken')
 
   useEffect(() => {
-    getAvalabilities()
+    getAvailabilities()
   }, [])
 
-  const getAvalabilities = async () => {
+  const getAvailabilities = async () => {
     const response = await axios({
       method: 'GET',
       url: 'http://localhost:8000/api/availabilities/ofuser',
@@ -67,6 +69,20 @@ const UserAvailabilityTable = () => {
     }
     getAvalabilities()
   }
+
+  // const deletePastAvailabilities = async id => {
+  //   const response = await axios({
+  //     method: 'DELETE',
+  //     url: `http://localhost:8000/api/past/availabilities/${authId}`,
+  //     headers: {
+  //       Authorization: `Bearer ${storageChecked}`
+  //     }
+  //   })
+  //   if (response.status === 200) {
+  //     toast.success('Shift availability deleted!')
+  //   }
+  //   getAvalabilities()
+  // }
 
   console.log('data=>', data)
 
