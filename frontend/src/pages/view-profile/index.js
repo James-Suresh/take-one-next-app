@@ -12,8 +12,8 @@ const UserView = () => {
 }
 
 UserView.acl = {
-  action: 'read',
-  subject: 'scheduler-page'
+  action: 'manage',
+  subject: 'view-profile-page'
 }
 
 export default UserView

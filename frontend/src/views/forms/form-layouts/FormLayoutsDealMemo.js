@@ -73,7 +73,6 @@ const HeadingTypography = styled(Typography)(({ theme }) => ({
 const defaultValues = {
   showName: '',
   season: '',
-  seasonStartDate: '',
   payrollPhone: '',
   payrollEmail: '',
   onboardingURL: ''
@@ -81,7 +80,7 @@ const defaultValues = {
 
 const FormLayoutsDealMemo = () => {
   // ** States
-  const [date, setDate] = useState(null)
+  // const [date, setDate] = useState(null)
   const [basicPicker, setBasicPicker] = useState(new Date())
   const [files, setFiles] = useState([])
   const [submit, setSubmit] = useState('Submit')
@@ -118,7 +117,6 @@ const FormLayoutsDealMemo = () => {
   const schema = yup.object().shape({
     showName: yup.string().required(),
     season: yup.string().required(),
-    seasonStartDate: yup.string().required(),
     payrollPhone: yup.string().required(),
     payrollEmail: yup.string().required(),
     onboardingLink: yup.string()
@@ -127,7 +125,6 @@ const FormLayoutsDealMemo = () => {
   // YUP controller
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -140,13 +137,14 @@ const FormLayoutsDealMemo = () => {
   const onSubmit = async data => {
     setSubmit('submitting data')
     const file = Object.values(files)[0]
-    const { showName, season, seasonStartDate, payrollPhone, payrollEmail, onboardingURL } = data
+    const { showName, season, payrollPhone, payrollEmail, onboardingURL } = data
     if (file) {
       console.log(file)
       const fileName = uuidv4() + '.' + file
       const fileURL = await uploadFile(file, `dealmemo/${fileName}`)
       if (fileURL) {
         const dealMemoURL = fileURL
+        const seasonStartDate = basicPicker
         console.log(dealMemoURL)
 
         axios({
@@ -282,27 +280,14 @@ const FormLayoutsDealMemo = () => {
               {errors.season && <FormHelperText sx={{ color: 'error.main' }}>{errors.season.message}</FormHelperText>}
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Controller
-                name='seasonStartDate'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { basicPicker, onChange, onBlur } }) => (
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={Boolean(errors.seasonStartDate)}
-                      value={basicPicker}
-                      label='Season Start Date'
-                      sx={{ width: '10px' }}
-                      renderInput={params => <TextField fullWidth {...params} />}
-                    />
-                  </LocalizationProvider>
-                )}
-              />
-              {errors.seasonStartDate && (
-                <FormHelperText sx={{ color: 'error.main' }}>{errors.seasonStartDate.message}</FormHelperText>
-              )}
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label='Season Start Date'
+                  value={basicPicker}
+                  onChange={newValue => setBasicPicker(newValue)}
+                  renderInput={params => <TextField fullWidth {...params} />}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller

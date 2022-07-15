@@ -38,5 +38,9 @@ const RolesComponent = () => {
     </Grid>
   )
 }
+RolesComponent.acl = {
+  action: 'manage',
+  subject: 'acl-page'
+}
 
 export default RolesComponent

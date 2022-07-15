@@ -6,9 +6,9 @@ import axios from 'axios'
 
 // ** Components Imports
 import { getLocalStorage } from 'src/hooks/helpers'
-import TabAccount from './TabAccount'
+import TabPersonal from './TabPersonal'
 
-const TabAccountData = ({ id }) => {
+const TabPersonalData = ({ id }) => {
   // ** State
   const [error, setError] = useState(false)
   const [data, setData] = useState(null)
@@ -35,10 +35,10 @@ const TabAccountData = ({ id }) => {
   }, [id])
 
   if (data) {
-    return <TabAccount data={data} />
+    return <TabPersonal data={data} />
   } else {
     return null
   }
 }
 
-export default TabAccountData
+export default TabPersonalData

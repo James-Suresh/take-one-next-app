@@ -1,35 +1,23 @@
-// ** React Imports
-import { useEffect, useState } from 'react'
-
 // ** Next Imports
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-
-import MuiFormControlLabel from '@mui/material/FormControlLabel'
-
 import { styled } from '@mui/material/styles'
-
 import Typography from '@mui/material/Typography'
 
 // ** Third Party Imports
-// import { ToastContainer, toast } from 'react-toastify'
-// import 'react-toastify/dist/ReactToastify.min.css'
-
-// ** Hooks
+import toast from 'react-hot-toast'
 import axios from 'axios'
-import jwt from 'jsonwebtoken'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import { useRouter } from 'next/router'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -57,13 +45,11 @@ const ActivateAccountPage = () => {
       data: { token }
     })
       .then(response => {
-        console.log('ACCOUNT ACTIVATION', response)
+        toast.success(response.data.message)
         router.push('/login')
-        // toast.success(response.data.message)
       })
       .catch(error => {
-        console.log('ACCOUNT ACTIVATION ERROR', error.response.data.error)
-        // toast.error(error.response.data.error)
+        toast.error(error.response.data.error)
       })
   }
 
@@ -72,7 +58,7 @@ const ActivateAccountPage = () => {
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ p: theme => `${theme.spacing(13, 7, 6.5)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img width='60' height='30' alt='Github' src='/images/logos/Logo-TO.png' style={{ marginRight: '7px' }} />
+            <img width='60' height='33' alt='Github' src='/images/logos/Logo-TO.png' style={{ marginRight: '7px' }} />
             <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>
               {themeConfig.templateName}
             </Typography>
@@ -95,10 +81,5 @@ const ActivateAccountPage = () => {
 }
 ActivateAccountPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
 ActivateAccountPage.guestGuard = true
-
-// export async function getStaticPaths(context) {
-//   const { params } = context
-//   const fetchedToken = params.token
-// }
 
 export default ActivateAccountPage

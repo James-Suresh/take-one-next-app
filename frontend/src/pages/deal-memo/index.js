@@ -23,7 +23,7 @@ const DealMemoPage = () => {
 
   return (
     <Grid container spacing={6}>
-      {ability?.can('read', 'analytics') ? (
+      {ability?.can('manage', 'dealmemo-form') ? (
         <Grid item xs={12}>
           <FormLayoutsDealMemo />
         </Grid>
@@ -35,7 +35,7 @@ const DealMemoPage = () => {
   )
 }
 DealMemoPage.acl = {
-  action: 'read',
+  action: 'manage',
   subject: 'dealmemo-page'
 }
 

@@ -57,6 +57,14 @@ const UseBgColor = () => {
       color: theme.palette.yeild.main,
       backgroundColor: hexToRGBA(theme.palette.yeild.main, 0.12)
     },
+    royalFilled: {
+      color: theme.palette.royal.contrastText,
+      backgroundColor: theme.palette.royal.main
+    },
+    royalLight: {
+      color: theme.palette.royal.main,
+      backgroundColor: hexToRGBA(theme.palette.royal.main, 0.12)
+    },
     infoFilled: {
       color: theme.palette.info.contrastText,
       backgroundColor: theme.palette.info.main

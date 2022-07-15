@@ -11,15 +11,17 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded'
 
 const navigation = () => {
   return [
-    {
-      title: 'Home',
-      icon: HomeRoundedIcon,
-      path: '/home'
-    },
+    // {
+    //   title: 'Home',
+    //   icon: HomeRoundedIcon,
+    //   path: '/home'
+    // },
     {
       title: 'Dispatch',
       icon: IosShareRoundedIcon,
-      path: '/dispatch'
+      path: '/dispatch',
+      action: 'manage',
+      subject: 'dispatch-page'
     },
     {
       title: 'Scheduler',
@@ -35,15 +37,17 @@ const navigation = () => {
       action: 'manage',
       subject: 'user-profile'
     },
-    {
-      title: 'Admin Profile',
-      icon: AccountBoxRoundedIcon,
-      path: '/admin-profile'
-    },
+    // {
+    //   title: 'Admin Profile',
+    //   icon: AccountBoxRoundedIcon,
+    //   path: '/admin-profile'
+    // },
     {
       title: 'View Profile',
       icon: AccountBoxRoundedIcon,
-      path: '/view-profile'
+      path: '/view-profile',
+      action: 'manage',
+      subject: 'view-profile-page'
     },
     {
       title: 'Deal Memo',
@@ -56,13 +60,15 @@ const navigation = () => {
       title: 'Access Control',
       icon: GppGoodRoundedIcon,
       path: '/acl',
-      action: 'read',
+      action: 'manage',
       subject: 'acl-page'
     },
     {
       title: 'Settings',
       icon: SettingsRoundedIcon,
-      path: '/account-settings'
+      path: '/account-settings',
+      action: 'manage',
+      subject: 'settings-page'
     }
   ]
 }

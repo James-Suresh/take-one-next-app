@@ -169,7 +169,6 @@ const OnboaringForm = () => {
   // React Hook controller
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -370,7 +369,7 @@ const OnboaringForm = () => {
             <Grid item xs={12} sm={6}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <MobileDatePicker
-                  label='Season Start Date'
+                  label='Start Date'
                   value={basicPicker}
                   onChange={newValue => setBasicPicker(newValue)}
                   renderInput={params => <TextField fullWidth {...params} />}
@@ -750,9 +749,11 @@ const OnboaringForm = () => {
             </Grid>
             {getStepContent(activeStep)}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button size='large' variant='contained' disabled={activeStep === 0} onClick={handleBack}>
-                Back
-              </Button>
+              <Box>
+                <Button size='large' variant='contained' disabled={activeStep === 0} onClick={handleBack}>
+                  Back
+                </Button>
+              </Box>
               {/* {activeStep === steps.length - 1 ? (
                 <Button size='large' variant='contained' type='Submit'>
                   Submit
@@ -762,19 +763,21 @@ const OnboaringForm = () => {
                   Next
                 </Button>
               )} */}
-              <Button size='large' variant='contained' type='Submit' disabled={activeStep === 0 - 1}>
-                Submit
-              </Button>
+              <Box>
+                <Button sx={{ mr: 4 }} size='large' variant='contained' type='Submit' disabled={activeStep === 0 - 1}>
+                  Submit
+                </Button>
 
-              <Button
-                size='large'
-                variant='contained'
-                type={typeSubmit}
-                onClick={handleNext}
-                disabled={activeStep === 2}
-              >
-                Next
-              </Button>
+                <Button
+                  size='large'
+                  variant='contained'
+                  type={typeSubmit}
+                  onClick={handleNext}
+                  disabled={activeStep === 2}
+                >
+                  Next
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </form>

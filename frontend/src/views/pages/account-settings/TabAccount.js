@@ -1,41 +1,33 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Alert from '@mui/material/Alert'
-import Select from '@mui/material/Select'
-import { styled } from '@mui/material/styles'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import AlertTitle from '@mui/material/AlertTitle'
-import IconButton from '@mui/material/IconButton'
-import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import Button from '@mui/material/Button'
-import { FormHelperText } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/lab'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import { FormHelperText } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import CardContent from '@mui/material/CardContent'
+import Grid from '@mui/material/Grid'
+import { styled } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
 // ** Auth Imports
-import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import { getLocalStorage } from 'src/hooks/helpers'
 
-// ** Icons Imports
-import Close from 'mdi-material-ui/Close'
+// ** Config
+import authConfig from 'src/configs/auth'
 
 // ** Third Party Imports
+import { yupResolver } from '@hookform/resolvers/yup'
+import axios from 'axios'
+import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import uploadFile from 'src/configs/firebase/uploadFile'
 import { v4 as uuidv4 } from 'uuid'
-import toast from 'react-hot-toast'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import axios from 'axios'
-import { useRouter } from 'next/router'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -61,16 +53,6 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
   }
 }))
 
-const defaultValues = {
-  firstName: '',
-  lastName: '',
-  nickName: '',
-  phone1: '',
-  phone2: '',
-  email1: '',
-  email2: ''
-}
-
 // ** Auth variables
 // const auth = isAuth()
 // const currentUser = auth
@@ -83,6 +65,9 @@ const TabAccount = ({ data }) => {
   const [newPhoto, setNewPhoto] = useState()
   const [submit, setSubmit] = useState('save changes')
 
+  // Tokenization for server request
+  const storageChecked = getLocalStorage('accessToken')
+
   // ** Hooks
   const router = useRouter()
 
@@ -93,6 +78,16 @@ const TabAccount = ({ data }) => {
       const newPhotoURL = URL.createObjectURL(file)
       setNewPhoto(newPhotoURL)
     }
+  }
+
+  const defaultValues = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    nickName: data.nickName,
+    phone1: data.phone1,
+    phone2: data.phone2,
+    email1: data.email,
+    email2: data.email2
   }
 
   // YUP validation rules
@@ -131,7 +126,7 @@ const TabAccount = ({ data }) => {
       if (photoURL) {
         axios({
           method: 'PUT',
-          url: 'http://localhost:8000/api/user/update/settings/account',
+          url: 'http://localhost:8000/api/user/update/settings/account-tab',
           data: {
             firstName,
             lastName,
@@ -201,7 +196,6 @@ const TabAccount = ({ data }) => {
                   onBlur={onBlur}
                   onChange={onChange}
                   error={Boolean(errors.firstName)}
-                  required
                   fullWidth
                   label='First Name'
                   placeholder='Leonard'
@@ -223,7 +217,6 @@ const TabAccount = ({ data }) => {
                   onBlur={onBlur}
                   onChange={onChange}
                   error={Boolean(errors.lastName)}
-                  required
                   fullWidth
                   label='Last Name'
                   placeholder='Carter'
@@ -368,9 +361,9 @@ const TabAccount = ({ data }) => {
             <Button variant='contained' sx={{ mr: 4 }} type='submit'>
               {submit}
             </Button>
-            <Button type='reset' variant='outlined' color='secondary'>
+            {/* <Button type='reset' variant='outlined' color='secondary'>
               Reset
-            </Button>
+            </Button> */}
           </Grid>
         </Grid>
       </form>

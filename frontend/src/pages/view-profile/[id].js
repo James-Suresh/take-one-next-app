@@ -11,6 +11,10 @@ const UserView = () => {
 
   return <ViewProfilePage id={id} />
 }
+UserView.acl = {
+  action: 'manage',
+  subject: 'view-profile-page'
+}
 
 // export const getStaticPaths = async () => {
 

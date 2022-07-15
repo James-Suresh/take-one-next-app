@@ -11,7 +11,7 @@ const UserView = () => {
 }
 
 UserView.acl = {
-  action: 'read',
+  action: 'manage',
   subject: 'scheduler-page'
 }
 

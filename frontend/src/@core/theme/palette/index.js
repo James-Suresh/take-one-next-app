@@ -73,6 +73,12 @@ const DefaultPalette = (mode, skin) => {
       dark: '#21AEDB',
       contrastText: '#FFF'
     },
+    royal: {
+      light: '#bf62fc',
+      main: '#b242fc',
+      dark: '#8b21d1',
+      contrastText: '#FFF'
+    },
     grey: {
       50: '#FAFAFA',
       100: '#F5F5F5',

@@ -3,79 +3,53 @@ import { useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardActions from '@mui/material/CardActions'
+import CardContent from '@mui/material/CardContent'
 import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Grid from '@mui/material/Grid'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Switch from '@mui/material/Switch'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import InputAdornment from '@mui/material/InputAdornment'
-import LinearProgress from '@mui/material/LinearProgress'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import DialogContentText from '@mui/material/DialogContentText'
 
 // ** Icons Imports
 import WorkRoundedIcon from '@mui/icons-material/WorkRounded'
-import Poll from 'mdi-material-ui/Poll'
-import Check from 'mdi-material-ui/Check'
-import Circle from 'mdi-material-ui/Circle'
-import StarOutline from 'mdi-material-ui/StarOutline'
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Third Party Imports
-import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import axios from 'axios'
+import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { getLocalStorage } from 'src/hooks/helpers'
+import * as yup from 'yup'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
-
-// ** Styled <sup> component
-const Sup = styled('sup')(({ theme }) => ({
-  top: '0.2rem',
-  left: '-0.6rem',
-  position: 'absolute',
-  color: theme.palette.primary.main
-}))
-
-// ** Styled <sub> component
-const Sub = styled('sub')({
-  fontWeight: 400,
-  fontSize: '.875rem',
-  lineHeight: '1.25rem',
-  alignSelf: 'flex-end'
-})
 
 const roleColors = {
-  admin: 'error',
+  admin: 'royal',
   support: 'warning',
-  author: 'warning',
-  user: 'success',
-  subscriber: 'primary'
+  user: 'info'
 }
 
 const positionColors = {
-  LSP: 'success',
-  LPA: 'warning',
-  ALM: 'secondary'
+  LSP: 'info',
+  LPA: 'error',
+  ALM: 'warning'
 }
 
 const booleanColors = {

@@ -4,14 +4,16 @@ const router = express.Router();
 // Import Controller
 const {
   read,
-  updateUserProfile,
+  updateUserProfileOnboarding,
   updateUserAvatar,
   getAllUsers,
   getNumAdmins,
   getNumUsers,
   updateUserProfileAdmin,
   updateUserNotesAdmin,
-  updateUserSettingsAccount,
+  updateUserSettingsAccountTab,
+  updateUserSettingsPersonalTab,
+  updateUserSettingsWorkTab,
 } = require("../controllers/user");
 const { requireSignin, adminMiddleware } = require("../controllers/auth");
 
@@ -22,11 +24,21 @@ router.get("/user/:id", requireSignin, read);
 router.get("/users/all", requireSignin, getAllUsers);
 router.get("/users/admins", requireSignin, getNumAdmins);
 router.get("/users/users", requireSignin, getNumUsers);
-router.put("/user/update", requireSignin, updateUserProfile);
+router.put("/user/update", requireSignin, updateUserProfileOnboarding);
 router.put(
-  "/user/update/settings/account",
+  "/user/update/settings/account-tab",
   requireSignin,
-  updateUserSettingsAccount
+  updateUserSettingsAccountTab
+);
+router.put(
+  "/user/update/settings/personal-tab",
+  requireSignin,
+  updateUserSettingsPersonalTab
+);
+router.put(
+  "/user/update/settings/work-tab",
+  requireSignin,
+  updateUserSettingsWorkTab
 );
 router.put(
   "/user/update/admin",

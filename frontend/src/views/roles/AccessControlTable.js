@@ -41,11 +41,11 @@ import axios from 'axios'
 
 // ** Vars
 const userRoleObj = {
-  admin: <Laptop sx={{ mr: 2, color: 'error.main' }} />,
+  admin: <Laptop sx={{ mr: 2, color: 'royal.main' }} />,
   support: <CogOutline sx={{ mr: 2, color: 'warning.main' }} />,
   // editor: <PencilOutline sx={{ mr: 2, color: 'info.main' }} />,
   // maintainer: <ChartDonut sx={{ mr: 2, color: 'success.main' }} />,
-  user: <AccountOutline sx={{ mr: 2, color: 'primary.main' }} />
+  user: <AccountOutline sx={{ mr: 2, color: 'info.main' }} />
 }
 
 const userPositionObj = {

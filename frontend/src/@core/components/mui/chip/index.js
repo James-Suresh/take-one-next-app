@@ -18,7 +18,8 @@ const Chip = props => {
     error: { ...bgColors.errorLight },
     warning: { ...bgColors.warningLight },
     yeild: { ...bgColors.yeildLight },
-    info: { ...bgColors.infoLight }
+    info: { ...bgColors.infoLight },
+    royal: { ...bgColors.royalLight }
   }
 
   return (

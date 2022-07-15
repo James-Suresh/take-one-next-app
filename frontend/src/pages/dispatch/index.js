@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent'
 import DispatchTable from 'src/views/table/data-grid/DispatchTable'
 import { Checkbox, Divider, FormControlLabel, FormGroup } from '@mui/material'
 
-const SecondPage = () => {
+const DispatchPage = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -56,5 +56,9 @@ const SecondPage = () => {
     </Grid>
   )
 }
+DispatchPage.acl = {
+  action: 'manage',
+  subject: 'dispatch-page'
+}
 
-export default SecondPage
+export default DispatchPage

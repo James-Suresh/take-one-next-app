@@ -30,7 +30,7 @@ const OnboardingPage = () => {
     <Box className='content-center'>
       <WrapperBox sx={{ zIndex: 1 }}>
         <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img width='60' height='30' alt='Github' src='/images/logos/Logo-TO.png' style={{ marginRight: '7px' }} />
+          <img width='60' height='33' alt='Github' src='/images/logos/Logo-TO.png' style={{ marginRight: '7px' }} />
           <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>
             {themeConfig.templateName}
           </Typography>
@@ -43,6 +43,10 @@ const OnboardingPage = () => {
   )
 }
 OnboardingPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
+OnboardingPage.acl = {
+  action: 'manage',
+  subject: 'onboarding-page'
+}
 // OnboardingPage.guestGuard = true
 
 export default OnboardingPage

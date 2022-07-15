@@ -24,7 +24,8 @@ exports.signup = (req, res) => {
     User.findOne({ email }).exec((err, user) => {
       if (user) {
         return res.status(400).json({
-          error: "Email is taken",
+          error:
+            "A User with this email already exists. Please use a different email. 👤",
         });
       }
 
@@ -293,7 +294,7 @@ exports.accountActivation = (req, res) => {
         if (err) {
           console.log("JWT VERIFY IN ACCOUNT ACTIVATION ERROR", err);
           return res.status(401).json({
-            error: "Expired link. Signup again",
+            error: "The activation link has expired. Please register again.",
           });
         }
 

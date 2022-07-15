@@ -67,7 +67,7 @@ const UserAvailabilityTable = () => {
     if (response.status === 200) {
       toast.success('Shift availability deleted!')
     }
-    getAvalabilities()
+    getAvailabilities()
   }
 
   // const deletePastAvailabilities = async id => {

@@ -56,7 +56,6 @@ const SchedulerPage = () => {
   // React Hook controller
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -194,7 +193,7 @@ const SchedulerPage = () => {
   )
 }
 SchedulerPage.acl = {
-  action: 'read',
+  action: 'manage',
   subject: 'scheduler-page'
 }
 

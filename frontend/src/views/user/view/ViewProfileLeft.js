@@ -89,20 +89,6 @@ const shiftColors = {
   Night: 'info'
 }
 
-// ** Default state values
-const defaultValues = {
-  legacy: false,
-  crewParking: false,
-  baseCamp: false,
-  travel: false,
-  requested: false,
-  set: false,
-  andyPriorityList: false,
-  needsPotty: false,
-  burned: false,
-  doNotBook: false
-}
-
 const ViewProfileLeft = ({ data }) => {
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
@@ -116,6 +102,20 @@ const ViewProfileLeft = ({ data }) => {
 
   // Get viewed user ID from useEffect props
   const viewedUserId = data._id
+
+  // ** Default state values
+  const defaultValues = {
+    legacy: data.legacy,
+    crewParking: data.crewParking,
+    baseCamp: data.baseCamp,
+    travel: data.travel,
+    requested: data.requested,
+    set: data.set,
+    andyPriorityList: data.andyPriorityList,
+    needsPotty: data.needsPotty,
+    burned: data.burned,
+    doNotBook: data.doNotBook
+  }
 
   // YUP validation rules
   const schema = yup.object().shape({
@@ -669,6 +669,7 @@ const ViewProfileLeft = ({ data }) => {
                             onBlur={onBlur}
                             onChange={onChange}
                             error={Boolean(errors.travel)}
+                            defaultValue={data.travel}
                             control={<Switch />}
                             label='Travel'
                           />

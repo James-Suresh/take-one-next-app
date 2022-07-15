@@ -51,14 +51,10 @@ const ViewProfileRight = ({ data }) => {
         sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
       >
         <Tab value='overview' label='Overview' icon={<AccountOutline sx={{ fontSize: '18px' }} />} />
-        <Tab value='security' label='Notes' icon={<LockOutline sx={{ fontSize: '18px' }} />} />
       </TabList>
       <Box sx={{ mt: 3 }}>
         <TabPanel sx={{ p: 0 }} value='overview'>
           <ViewProfileOverview viewedUser={data} />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <UserViewSecurity />
         </TabPanel>
       </Box>
     </TabContext>

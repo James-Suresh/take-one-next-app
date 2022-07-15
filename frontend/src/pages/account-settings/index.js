@@ -1,31 +1,30 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
+import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
-import TabContext from '@mui/lab/TabContext'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
 import { styled } from '@mui/material/styles'
 import MuiTab from '@mui/material/Tab'
 
 // ** Icons Imports
-import BellOutline from 'mdi-material-ui/BellOutline'
+import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
-import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
-import BookmarkOutline from 'mdi-material-ui/BookmarkOutline'
 import InformationOutline from 'mdi-material-ui/InformationOutline'
 
 // ** Demo Tabs Imports
-import TabInfo from 'src/views/pages/account-settings/TabInfo'
 import TabAccountData from 'src/views/pages/account-settings/TabAccountData'
-import TabSecurity from 'src/views/pages/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import { getLocalStorage, isAuth } from 'src/hooks/helpers'
-import axios from 'axios'
+import { isAuth } from 'src/hooks/helpers'
+import TabPersonal from 'src/views/pages/account-settings/TabPersonal'
+import TabWork from 'src/views/pages/account-settings/TabWork'
+import TabPersonalData from 'src/views/pages/account-settings/TabPersonalData'
+import TabWorkData from 'src/views/pages/account-settings/TabWorkData'
 
 const Tab = styled(MuiTab)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -73,20 +72,20 @@ const AccountSettings = () => {
             }
           />
           <Tab
-            value='work info'
+            value='personal'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <InformationOutline sx={{ fontSize: '1.125rem' }} />
-                <TabName>Info</TabName>
+                <TabName>Personal</TabName>
               </Box>
             }
           />
           <Tab
-            value='security'
+            value='work'
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOpenOutline sx={{ fontSize: '1.125rem' }} />
-                <TabName>Security</TabName>
+                <WorkOutlineRoundedIcon sx={{ fontSize: '1.125rem' }} />
+                <TabName>Work</TabName>
               </Box>
             }
           />
@@ -94,15 +93,19 @@ const AccountSettings = () => {
         <TabPanel sx={{ p: 0 }} value='account'>
           <TabAccountData id={id} />
         </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='work info'>
-          <TabInfo />
+        <TabPanel sx={{ p: 0 }} value='personal'>
+          <TabPersonalData id={id} />
         </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <TabSecurity />
+        <TabPanel sx={{ p: 0 }} value='work'>
+          <TabWorkData id={id} />
         </TabPanel>
       </TabContext>
     </Card>
   )
+}
+AccountSettings.acl = {
+  action: 'manage',
+  subject: 'settings-page'
 }
 
 export default AccountSettings

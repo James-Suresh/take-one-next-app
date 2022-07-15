@@ -26,7 +26,7 @@ const AdminProfilePage = () => {
           </CardContent>
         </Card>
       </Grid>
-      {ability?.can('read', 'analytics') ? (
+      {ability?.can('read', 'dealmemo-form') ? (
         <Grid item md={6} xs={12}>
           <Card>
             <CardHeader title='Analytics' />
@@ -42,7 +42,7 @@ const AdminProfilePage = () => {
 }
 AdminProfilePage.acl = {
   action: 'read',
-  subject: 'user-profile-page'
+  subject: 'admin-profile-page'
 }
 
 export default AdminProfilePage

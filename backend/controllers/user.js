@@ -18,8 +18,7 @@ exports.read = (req, res) => {
 };
 
 /* ===================> Update User Profile from USER ONBOARDING <=================*/
-exports.updateUserProfile = (req, res) => {
-  //   console.log("update-user - req.user", req.user, "Update Data", req.body);
+exports.updateUserProfileOnboarding = (req, res) => {
   const {
     firstName,
     lastName,
@@ -75,68 +74,19 @@ exports.updateUserProfile = (req, res) => {
         });
       }
 
-      // console.log("USER ID", { _id: req.user._id });
-
       const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
 
-      // console.log("AC TOKEN", accessToken);
       console.log("Onboarding Success");
 
       res.json({ accessToken, updatedUser });
-      // res.json(updatedUser);
-    });
-  });
-};
-
-/* ===================> Update User Profile from USER SETTINGS ACCOUNT <=================*/
-exports.updateUserSettingsAccount = (req, res) => {
-  //   console.log("update-user - req.user", req.user, "Update Data", req.body);
-  const {
-    firstName,
-    lastName,
-    nickName,
-    since,
-    phone1,
-    phone2,
-    email1,
-    email2,
-    photoURL,
-  } = req.body;
-
-  User.findOne({ _id: req.user._id }, (err, user) => {
-    if (err || !user) {
-      return res.status(400).json({
-        error: "User not found",
-      });
-    }
-
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.nickName = nickName;
-    user.since = since;
-    user.phone1 = phone1;
-    user.phone2 = phone2;
-    user.email2 = email2;
-    user.email1 = email2;
-    user.photoURL = photoURL;
-
-    user.save((err, updatedUser) => {
-      if (err) {
-        console.log("User update err", err);
-        return res.status(400).json({
-          error: "User update failed",
-        });
-      }
-      res.json(updatedUser);
     });
   });
 };
 
 /* ===================> Update User Profile from ADMIN <=================*/
 exports.updateUserProfileAdmin = (req, res) => {
-  //   console.log("update-user - req.user", req.user, "Update Data", req.body);
   const {
     legacy,
     crewParking,
@@ -181,41 +131,10 @@ exports.updateUserProfileAdmin = (req, res) => {
   );
 };
 
-// User.findOne({ viewedUserId }, (err, user) => {
-//   if (err || !user) {
-//     return res.status(400).json({
-//       error: "User not found",
-//     });
-//   }
-
-//   user.legacy = legacy;
-//   user.crewParking = crewParking;
-//   user.baseCamp = baseCamp;
-//   user.travel = travel;
-//   user.requested = requested;
-//   user.set = set;
-//   user.andyPriorityList = andyPriorityList;
-//   user.needsPotty = needsPotty;
-//   user.burned = burned;
-//   user.doNotBook = doNotBook;
-
-//   user.save((err, updatedUser) => {
-//     if (err) {
-//       console.log("User update err", err);
-//       return res.status(400).json({
-//         error: "User update failed",
-//       });
-//     }
-// res.json(updatedUser);
-// });
-//   });
-// };
-
 exports.updateUserNotesAdmin = (req, res) => {
-  //   console.log("update-user - req.user", req.user, "Update Data", req.body);
   const { generalNotes, viewedUserId } = req.body;
 
-  User.findOne({ viewedUserId }, (err, user) => {
+  User.findOne({ _id: viewedUserId }, (err, user) => {
     if (err || !user) {
       return res.status(400).json({
         error: "User not found",
@@ -235,24 +154,6 @@ exports.updateUserNotesAdmin = (req, res) => {
     });
   });
 };
-
-// if (!email) {
-//   return res.status(400).json({
-//     error: "Email is required",
-//   });
-// } else {
-//   user.email = email;
-// }
-
-// if (password) {
-//   if (password.length < 6) {
-//     return res.status(400).json({
-//       error: "Password should be min 6 char long",
-//     });
-//   } else {
-//     user.password = password;
-//   }
-// }
 
 /* ===================> Update User Avatar <=================*/
 exports.updateUserAvatar = (req, res) => {
@@ -310,4 +211,120 @@ exports.getNumUsers = async (req, res) => {
   return User.find({ role: "user" })
     .then((data) => (data ? onSuccess(data) : invalidRequest(data)))
     .catch(onError);
+};
+
+/* ===================> SETTINGS <===================*/
+// ** Update user profile from user settings account-tab
+exports.updateUserSettingsAccountTab = (req, res) => {
+  const {
+    firstName,
+    lastName,
+    nickName,
+    since,
+    phone1,
+    phone2,
+    email1,
+    email2,
+    photoURL,
+  } = req.body;
+
+  User.findOne({ _id: req.user._id }, (err, user) => {
+    if (err || !user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.nickName = nickName;
+    user.since = since;
+    user.phone1 = phone1;
+    user.phone2 = phone2;
+    user.email2 = email2;
+    user.email1 = email1;
+    user.photoURL = photoURL;
+
+    user.save((err, updatedUser) => {
+      if (err) {
+        console.log("User update err", err);
+        return res.status(400).json({
+          error: "User update failed",
+        });
+      }
+
+      const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.json({ accessToken, updatedUser });
+    });
+  });
+};
+
+// ** Update user profile from user settings personal-tab
+exports.updateUserSettingsPersonalTab = (req, res) => {
+  const { address, city, postalCode, province, country } = req.body;
+
+  User.findOne({ _id: req.user._id }, (err, user) => {
+    if (err || !user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    user.address = address;
+    user.city = city;
+    user.postalCode = postalCode;
+    user.province = province;
+    user.country = country;
+
+    user.save((err, updatedUser) => {
+      if (err) {
+        console.log("User update err", err);
+        return res.status(400).json({
+          error: "User update failed",
+        });
+      }
+
+      const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.json({ accessToken, updatedUser });
+    });
+  });
+};
+
+// ** Update user profile from user settings work-tab
+exports.updateUserSettingsWorkTab = (req, res) => {
+  const { shift, labour, travel, vehicle } = req.body;
+
+  User.findOne({ _id: req.user._id }, (err, user) => {
+    if (err || !user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    user.shift = shift;
+    user.labour = labour;
+    user.travel = travel;
+    user.vehicle = vehicle;
+
+    user.save((err, updatedUser) => {
+      if (err) {
+        console.log("User update err", err);
+        return res.status(400).json({
+          error: "User update failed",
+        });
+      }
+
+      const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.json({ accessToken, updatedUser });
+    });
+  });
 };

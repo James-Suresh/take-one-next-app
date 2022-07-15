@@ -23,6 +23,7 @@ const FormLayoutAdminNotes = ({ viewedUser }) => {
   const viewedUserId = viewedUser._id
   const userNotes = viewedUser.generalNotes
   const generalNotes = notes
+  console.log('VW User ID', viewedUserId)
 
   const handleNotesOnChange = event => {
     setNotes(event.target.value)
