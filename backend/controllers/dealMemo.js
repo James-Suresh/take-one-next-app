@@ -3,14 +3,16 @@ const { error, success, notFound } = require("../utils/response");
 
 exports.read = (req, res) => {
   const userId = req.params.id;
-  User.findById(userId).exec((err, user) => {
+  User.findById(userId, {
+    hashed_password: 0,
+    salt: 0
+  }).exec((err, user) => {
     if (err || !user) {
       return res.status(400).json({
         error: "User not found",
       });
     }
-    user.hashed_password = undefined;
-    user.salt = undefined;
+    
     res.json(user);
   });
 };

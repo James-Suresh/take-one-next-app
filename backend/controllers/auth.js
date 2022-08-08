@@ -419,21 +419,16 @@ exports.getUserToken = (req, res) => {
     console.log("The user logging in", userId);
 
     // find user in database with matching email
-    User.findById(userId).exec((err, user) => {
-      if (err || !user) {
+    User.findById(userId, {
+      hashed_password: 0,
+      salt: 0
+    }).exec((err, userData) => {
+      if (err || !userData) {
         return res.status(400).json({
           error: "User with that email does not exist. Please signup",
         });
       }
-      console.log("Before deletion", user);
-      // delete password data
-      // delete user.hashed_password;
-      // delete user.salt;
 
-      // store user data in variable userData
-      const userData = user;
-
-      // console.log("after deletion", userData);
       return res.status(200).json({ userData });
     });
   } else {

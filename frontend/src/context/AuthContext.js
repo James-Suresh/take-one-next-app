@@ -71,7 +71,6 @@ const AuthProvider = ({ children }) => {
     })
       .then(async res => {
         window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
-        console.log('THE RESP', res.data)
       })
       .then(() => {
         // axios({

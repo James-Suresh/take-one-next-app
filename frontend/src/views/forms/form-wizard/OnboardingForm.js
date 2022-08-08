@@ -234,28 +234,14 @@ const OnboaringForm = () => {
           }
         })
           .then(async res => {
-            window.localStorage.removeItem('userData')
-            window.localStorage.removeItem(authConfig.storageTokenKeyName)
-            window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
             console.log('THE RESP', res.data)
+            window.localStorage.setItem('userData', JSON.stringify(res.data.updatedUser))
+            toast.success('You have been successfully onboarded!')
+            router.push('/')
           })
-          .then(() => {
-            axios
-              .get(authConfig.meEndpoint, {
-                headers: {
-                  Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
-                }
-              })
-              .then(async response => {
-                window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
-                console.log('onboarding success', response)
-                toast.success('You have been successfully onboarded!')
-                router.push('/')
-              })
-              .catch(error => {
-                console.log('onboarding ERROR', error.data)
-                toast.error('Onboarding failed. Please try again!')
-              })
+          .catch(error => {
+            console.log('onboarding ERROR', error.data)
+            toast.error('Onboarding failed. Please try again!')
           })
       }
     }
