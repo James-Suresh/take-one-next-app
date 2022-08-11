@@ -35,7 +35,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { getLocalStorage } from 'src/hooks/helpers'
+import { getCookies } from 'src/store/actions/cookie-actions'
 import * as yup from 'yup'
 
 // ** Utils Import
@@ -74,7 +74,8 @@ const UserViewLeft = ({ data }) => {
   const [openEdit, setOpenEdit] = useState(false)
 
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
+  const token = getCookies();
+
 
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true)
@@ -118,7 +119,7 @@ const UserViewLeft = ({ data }) => {
         viewedUserId
       },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {

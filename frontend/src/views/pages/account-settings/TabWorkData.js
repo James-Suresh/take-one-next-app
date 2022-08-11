@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 // ** Components Imports
-import { getLocalStorage } from 'src/hooks/helpers'
+import { getCookies } from 'src/store/actions/cookie-actions'
 import TabWork from './TabWork'
 
 const TabWorkData = ({ id }) => {
@@ -13,15 +13,15 @@ const TabWorkData = ({ id }) => {
   const [error, setError] = useState(false)
   const [data, setData] = useState(null)
 
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   useEffect(() => {
+    const token = getCookies();
+
     axios
       // .get('http://localhost:8000/api/user/view/', { params: { id } })
       .get(`http://localhost:8000/api/user/view/${id}`, {
         headers: {
-          Authorization: `Bearer ${storageChecked}`
+          Authorization: `Bearer ${token}`
         }
       })
       .then(response => {

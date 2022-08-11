@@ -19,11 +19,10 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
 // ** Third Party Imports
+import axios from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import axios from 'axios'
-import { getLocalStorage } from 'src/hooks/helpers'
-import { CosineWave } from 'mdi-material-ui'
+import { getCookies } from 'src/store/actions/cookie-actions'
 
 // ** Icons Imports
 
@@ -33,6 +32,7 @@ const RolesCards = () => {
   const [dialogTitle, setDialogTitle] = useState('Add')
   const [numAdmin, setNumAdmin] = useState([])
   const [numUsers, setNumUsers] = useState([])
+  const token = getCookies();
 
   // ** Hooks
   useEffect(() => {
@@ -45,7 +45,7 @@ const RolesCards = () => {
       method: 'GET',
       url: 'http://localhost:8000/api/users/admins',
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {
@@ -58,7 +58,7 @@ const RolesCards = () => {
       method: 'GET',
       url: 'http://localhost:8000/api/users/users',
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {
@@ -70,7 +70,6 @@ const RolesCards = () => {
   const numOfUsers = numUsers.length
 
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   const {
     control,
@@ -92,7 +91,7 @@ const RolesCards = () => {
       url: 'http://localhost:8000/api/whitelist/email',
       data: { email },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {

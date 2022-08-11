@@ -5,6 +5,7 @@ import { useState } from 'react'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import DatePicker from '@mui/lab/DatePicker'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
+import { FormHelperText } from '@mui/material'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
@@ -14,28 +15,25 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { FormControlLabel, FormHelperText, FormLabel } from '@mui/material'
 
 // ** Third Party Imports
-import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
-import FileUploaderMultipleDealMemo from '../form-elements/file-uploader/FileUploaderMultipleDealMemo'
 import axios from 'axios'
-import { getLocalStorage } from 'src/hooks/helpers'
+import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import uploadFile from 'src/configs/firebase/uploadFile'
+import * as yup from 'yup'
 
 // ** React Imports
 import { Fragment } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import { styled } from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close'
@@ -43,6 +41,7 @@ import FileDocumentOutline from 'mdi-material-ui/FileDocumentOutline'
 
 // ** Third Party Imports
 import { useDropzone } from 'react-dropzone'
+import { getCookies } from 'src/store/actions/cookie-actions'
 import { v4 as uuidv4 } from 'uuid'
 
 // Styled component for the upload image inside the dropzone area
@@ -84,9 +83,6 @@ const FormLayoutsDealMemo = () => {
   const [basicPicker, setBasicPicker] = useState(new Date())
   const [files, setFiles] = useState([])
   const [submit, setSubmit] = useState('Submit')
-
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
@@ -136,6 +132,12 @@ const FormLayoutsDealMemo = () => {
   // Handle form submit
   const onSubmit = async data => {
     setSubmit('submitting data')
+
+
+    const token = getCookies();
+
+
+
     const file = Object.values(files)[0]
     const { showName, season, payrollPhone, payrollEmail, onboardingURL } = data
     if (file) {
@@ -160,7 +162,7 @@ const FormLayoutsDealMemo = () => {
             dealMemoURL
           },
           headers: {
-            Authorization: `Bearer ${storageChecked}`
+            Authorization: `Bearer ${token}`
           }
         })
           .then(response => {
@@ -187,7 +189,7 @@ const FormLayoutsDealMemo = () => {
         onboardingURL
       },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {

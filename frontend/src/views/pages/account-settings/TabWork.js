@@ -1,6 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 // ** MUI Imports
 import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/material'
@@ -11,27 +11,27 @@ import FormControl from '@mui/material/FormControl'
 import Grid from '@mui/material/Grid'
 
 // ** Auth Imports
-import { getLocalStorage } from 'src/hooks/helpers'
 
 // ** Config
 import authConfig from 'src/configs/auth'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import axios from 'axios'
+import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import { getCookies } from 'src/store/actions/cookie-actions'
+import { setUser } from 'src/store/slices/auth-slice'
+import * as yup from 'yup'
 
 const TabWork = ({ data }) => {
   // ** State
   const [submit, setSubmit] = useState('save changes')
 
   // ** Hooks
-  const router = useRouter()
-
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const defaultValues = {
     shift: data.shift,
@@ -63,6 +63,8 @@ const TabWork = ({ data }) => {
   const onSubmit = async data => {
     setSubmit('Saving...')
     const { shift, labour, vehicle, travel } = data
+    const token = getCookies()
+
 
     axios({
       method: 'PUT',
@@ -74,23 +76,20 @@ const TabWork = ({ data }) => {
         vehicle
       },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
-      .then(async res => {
-        window.localStorage.removeItem('userData')
-        window.localStorage.removeItem(authConfig.storageTokenKeyName)
-        window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
-      })
       .then(() => {
         axios
           .get(authConfig.meEndpoint, {
             headers: {
-              Authorization: window.localStorage.getItem(authConfig.storageTokenKeyName)
+              Authorization: token
             }
           })
           .then(async response => {
-            window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
+
+            dispatch(setUser(response.data.userData))
+
             console.log('WORK INFO UPDATE SUCCESS', response)
             setSubmit('Save changes')
             toast.success('Your work details have been successfully updated!')

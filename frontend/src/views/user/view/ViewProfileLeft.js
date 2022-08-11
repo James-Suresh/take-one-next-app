@@ -3,51 +3,43 @@ import { useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardActions from '@mui/material/CardActions'
+import CardContent from '@mui/material/CardContent'
 import Dialog from '@mui/material/Dialog'
-import Select from '@mui/material/Select'
-import Switch from '@mui/material/Switch'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 import Divider from '@mui/material/Divider'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Grid from '@mui/material/Grid'
+import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 import { styled } from '@mui/material/styles'
+import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
-import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import InputAdornment from '@mui/material/InputAdornment'
-import LinearProgress from '@mui/material/LinearProgress'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import DialogContentText from '@mui/material/DialogContentText'
 
 // ** Icons Imports
 import WorkRoundedIcon from '@mui/icons-material/WorkRounded'
-import Poll from 'mdi-material-ui/Poll'
-import Check from 'mdi-material-ui/Check'
-import Circle from 'mdi-material-ui/Circle'
-import StarOutline from 'mdi-material-ui/StarOutline'
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Third Party Imports
-import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import axios from 'axios'
-import { getLocalStorage } from 'src/hooks/helpers'
+import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import * as yup from 'yup'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
-import { Tag } from '@mui/icons-material'
+import { getCookies } from 'src/store/actions/cookie-actions'
 
 // ** Styled <sup> component
 const Sup = styled('sup')(({ theme }) => ({
@@ -94,7 +86,8 @@ const ViewProfileLeft = ({ data }) => {
   const [openEdit, setOpenEdit] = useState(false)
 
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
+  const token = getCookies();
+
 
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true)
@@ -167,7 +160,7 @@ const ViewProfileLeft = ({ data }) => {
         viewedUserId
       },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {

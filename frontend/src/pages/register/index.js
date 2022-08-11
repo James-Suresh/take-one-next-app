@@ -18,7 +18,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from '@mui/material/InputLabel'
 import MuiLink from '@mui/material/Link'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
@@ -27,9 +27,9 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 
 // ** Third Party Imports
-import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import * as yup from 'yup'
 
 // ** Configs
@@ -39,8 +39,7 @@ import themeConfig from 'src/configs/themeConfig'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Hooks
-import { useSettings } from 'src/@core/hooks/useSettings'
-import { useAuth } from 'src/hooks/useAuth'
+import { useRouter } from 'next/router'
 
 const defaultValues = {
   email: '',
@@ -75,7 +74,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // ** Hooks
-  const { register } = useAuth()
+  const router = useRouter();
 
   const schema = yup.object().shape({
     password: yup.string().min(5).max(15).required(),
@@ -96,8 +95,9 @@ const Register = () => {
   })
 
   const onSubmit = data => {
-    const { email, password } = data
-    register({ email, password }, err => {
+    const { email, password } = data;
+
+    const errorCallback = (err) => {
       if (err.email) {
         setError('email', {
           type: 'manual',
@@ -114,7 +114,10 @@ const Register = () => {
         toast.error(err.response.data.error)
         // toast.error('This email is not authorized to register for an account with the Take One App 🔒')
       }
-    })
+    }
+
+    handleRegister({ email, password, errorCallback });
+    router.push('/email-sent')
   }
 
   return (

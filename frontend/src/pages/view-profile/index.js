@@ -1,13 +1,15 @@
 // ** Third Party Imports
 import axios from 'axios'
-import { isAuth } from 'src/hooks/helpers'
+import { useAuth } from 'src/hooks/useAuth';
 
 // ** Demo Components Imports
 import ViewProfilePage from 'src/views/user/view/ViewProfilePage'
 
 const UserView = () => {
-  const currentUserId = isAuth()._id
+  const {user} = useAuth();
+  const currentUserId = user?._id
 
+  if (!currentUserId) return null;
   return <ViewProfilePage id={currentUserId} />
 }
 

@@ -1,22 +1,20 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
 
 // ** MUI Imports
-import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
+import Grid from '@mui/material/Grid'
 
 // ** Third Party Components
 import axios from 'axios'
 
 // ** Demo Components Imports
-import UserViewLeft from 'src/views/user/view/UserViewLeft'
-import UserViewRight from 'src/views/user/view/UserViewRight'
+import { getCookies } from 'src/store/actions/cookie-actions'
 import ViewProfileLeft from './ViewProfileLeft'
 import ViewProfileRight from './ViewProfileRight'
-import { getLocalStorage } from 'src/hooks/helpers'
 
 const UserView = ({ id }) => {
   // ** State
@@ -24,14 +22,15 @@ const UserView = ({ id }) => {
   const [data, setData] = useState(null)
 
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
+  const token = getCookies();
+
 
   useEffect(() => {
     axios
       // .get('http://localhost:8000/api/user/view/', { params: { id } })
       .get(`http://localhost:8000/api/user/view/${id}`, {
         headers: {
-          Authorization: `Bearer ${storageChecked}`
+          Authorization: `Bearer ${token}`
         }
       })
       .then(response => {

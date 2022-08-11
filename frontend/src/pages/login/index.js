@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -8,6 +8,8 @@ import Link from 'next/link'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import MuiCard from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
 import Checkbox from '@mui/material/Checkbox'
 import FormControl from '@mui/material/FormControl'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
@@ -20,8 +22,6 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import MuiCard from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 
 // ** Icons Imports
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
@@ -40,7 +40,10 @@ import { useAuth } from 'src/hooks/useAuth'
 import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
+import { useDispatch } from 'react-redux'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+import { handleLogin } from 'src/store/slices/auth-slice'
+import { useRouter } from 'next/router'
 
 // ** Demo Imports
 
@@ -78,7 +81,8 @@ const LoginPage = () => {
 
   // ** Hooks
   const auth = useAuth()
-  const bgClasses = useBgColor()
+  const dispatch = useDispatch();
+  const bgClasses = useBgColor();
 
   const {
     control,
@@ -93,12 +97,16 @@ const LoginPage = () => {
 
   const onSubmit = data => {
     const { email, password } = data
-    auth.login({ email, password }, () => {
+
+
+    const errorCallback = () => {
       setError('email', {
         type: 'manual',
         message: 'Email or Password is invalid'
       })
-    })
+    }
+
+    dispatch(handleLogin({ email, password, errorCallback }))
   }
 
   return (

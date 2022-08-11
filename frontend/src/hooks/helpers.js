@@ -1,4 +1,5 @@
 import cookie from 'js-cookie'
+import { getCookies } from 'src/store/actions/cookie-actions'
 
 // set in cookie
 export const setCookie = (key, value) => {
@@ -53,19 +54,6 @@ export const authenticate = (response, next) => {
   next()
 }
 
-// access user info from localstorage
-export const isAuth = () => {
-  if (window !== 'undifined') {
-    const storageChecked = getLocalStorage('accessToken')
-    if (storageChecked) {
-      if (localStorage.getItem('userData')) {
-        return JSON.parse(localStorage.getItem('userData'))
-      } else {
-        return false
-      }
-    }
-  }
-}
 
 // remove authentication
 export const signout = next => {

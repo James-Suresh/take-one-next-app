@@ -1,12 +1,14 @@
 // ** Import hooks
-import { isAuth } from 'src/hooks/helpers'
+import { useAuth } from 'src/hooks/useAuth';
 
 // ** Demo Components Imports
-import UserViewPage from 'src/views/user/view/UserViewPage'
+import UserViewPage from 'src/views/user/view/UserViewPage';
 
 const UserView = () => {
-  const currentUserId = isAuth()._id
+  const { user } = useAuth();
+  const currentUserId = user?._id
 
+  if (!currentUserId) return null;
   return <UserViewPage id={currentUserId} />
 }
 

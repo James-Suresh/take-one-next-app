@@ -21,7 +21,8 @@ import { DeleteForeverRounded } from '@mui/icons-material'
 import { IconButton, Stack, Tooltip } from '@mui/material'
 import axios from 'axios'
 import moment from 'moment'
-import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import { useAuth } from 'src/hooks/useAuth'
+import { getCookies } from 'src/store/actions/cookie-actions'
 
 const shiftObj = {
   Day: { title: 'Day Shift', color: 'yeild' },
@@ -34,10 +35,11 @@ const UserAvailabilityTable = () => {
   const [hideNameColumn, setHideNameColumn] = useState(false)
   const [data, setData] = React.useState([])
 
-  const authId = isAuth()._id
-
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
+  const token = getCookies();
+
+  const { user } = useAuth();
+  const { firstName, lastName, email, photoURL } = user ?? {};
 
   useEffect(() => {
     getAvailabilities()
@@ -48,9 +50,10 @@ const UserAvailabilityTable = () => {
       method: 'GET',
       url: 'http://localhost:8000/api/availabilities/ofuser',
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
+
     if (response.status === 200) {
       setData(response.data.result)
     }
@@ -61,7 +64,7 @@ const UserAvailabilityTable = () => {
       method: 'DELETE',
       url: `http://localhost:8000/api/availabilities/${id}`,
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {
@@ -70,21 +73,6 @@ const UserAvailabilityTable = () => {
     getAvailabilities()
   }
 
-  // const deletePastAvailabilities = async id => {
-  //   const response = await axios({
-  //     method: 'DELETE',
-  //     url: `http://localhost:8000/api/past/availabilities/${authId}`,
-  //     headers: {
-  //       Authorization: `Bearer ${storageChecked}`
-  //     }
-  //   })
-  //   if (response.status === 200) {
-  //     toast.success('Shift availability deleted!')
-  //   }
-  //   getAvalabilities()
-  // }
-
-  console.log('data=>', data)
 
   const columns = [
     {
@@ -94,9 +82,6 @@ const UserAvailabilityTable = () => {
       headerName: 'Name',
       hide: hideNameColumn,
       renderCell: params => {
-        const { row } = params
-        const { firstName, lastName, email, photoURL } = isAuth()
-
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <CustomAvatar src={photoURL} sx={{ mr: 3, width: 34, height: 34 }} />

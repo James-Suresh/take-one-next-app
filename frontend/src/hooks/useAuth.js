@@ -1,4 +1,3 @@
-import { useContext } from 'react'
-import { AuthContext } from 'src/context/AuthContext'
+import { useSelector } from "react-redux";
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useSelector(state => state.auth);

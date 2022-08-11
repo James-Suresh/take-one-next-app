@@ -1,31 +1,29 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Menu from '@mui/material/Menu'
-import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
+import Badge from '@mui/material/Badge'
+import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
+import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 
 // ** Icons Imports
-import CogOutline from 'mdi-material-ui/CogOutline'
-import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
-import EmailOutline from 'mdi-material-ui/EmailOutline'
-import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
-import MessageOutline from 'mdi-material-ui/MessageOutline'
+import CogOutline from 'mdi-material-ui/CogOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
+import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 
 // ** Context
+import { useDispatch } from 'react-redux'
 import { useAuth } from 'src/hooks/useAuth'
-import { isAuth } from 'src/hooks/helpers'
+import { logout } from 'src/store/slices/auth-slice'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -45,7 +43,8 @@ const UserDropdown = props => {
 
   // ** Hooks
   const router = useRouter()
-  const { logout } = useAuth()
+  const dispatch = useDispatch();
+  const { user } = useAuth()
 
   // ** Vars
   const { direction } = settings
@@ -62,8 +61,9 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
-    logout()
-    handleDropdownClose()
+    dispatch(logout());
+    removeCookies();
+    handleDropdownClose('/login')
   }
 
   const styles = {
@@ -82,23 +82,26 @@ const UserDropdown = props => {
 
   return (
     <Fragment>
-      <Badge
-        overlap='circular'
-        onClick={handleDropdownOpen}
-        sx={{ ml: 2, cursor: 'pointer' }}
-        badgeContent={<BadgeContentSpan />}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-      >
-        <Avatar
+      {
+        user &&
+        <Badge
+          overlap='circular'
           onClick={handleDropdownOpen}
-          sx={{ width: 40, height: 40 }}
-          alt={isAuth().firstName}
-          src={isAuth().photoURL}
-        />
-      </Badge>
+          sx={{ ml: 2, cursor: 'pointer' }}
+          badgeContent={<BadgeContentSpan />}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+        >
+          <Avatar
+            onClick={handleDropdownOpen}
+            sx={{ width: 40, height: 40 }}
+            alt={user.firstName}
+            src={user.photoURL}
+          />
+        </Badge>
+      }
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -113,33 +116,38 @@ const UserDropdown = props => {
           horizontal: direction === 'ltr' ? 'right' : 'left'
         }}
       >
-        <Box sx={{ pt: 2, pb: 3, px: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Badge
-              overlap='circular'
-              badgeContent={<BadgeContentSpan />}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-            >
-              <Avatar alt={isAuth().firstName} src={isAuth().photoURL} sx={{ width: '2.5rem', height: '2.5rem' }} />
-            </Badge>
-            <Box
-              sx={{
-                display: 'flex',
-                marginLeft: 3,
-                alignItems: 'flex-start',
-                flexDirection: 'column'
-              }}
-            >
-              <Typography sx={{ fontWeight: 600 }}>{`${isAuth().firstName} ${isAuth().lastName}`}</Typography>
-              <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                {isAuth().role}
-              </Typography>
+        {user &&
+          <Box sx={{ pt: 2, pb: 3, px: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+              <Badge
+                overlap='circular'
+                badgeContent={<BadgeContentSpan />}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+              >
+                <Avatar alt={user.firstName} src={user.photoURL} sx={{ width: '2.5rem', height: '2.5rem' }} />
+              </Badge>
+              <Box
+                sx={{
+                  display: 'flex',
+                  marginLeft: 3,
+                  alignItems: 'flex-start',
+                  flexDirection: 'column'
+                }}
+              >
+                <Typography sx={{ fontWeight: 600 }}>{`${user.firstName} ${user.lastName}`}</Typography>
+                <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
+                  {user.role}
+                </Typography>
+              </Box>
+
+
             </Box>
           </Box>
-        </Box>
+        }
         <Divider sx={{ mt: 0, mb: 1 }} />
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/user-profile')}>
           <Box sx={styles}>

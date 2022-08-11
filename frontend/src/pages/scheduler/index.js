@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 // ** Context Imports
 
@@ -23,13 +23,12 @@ import TextField from '@mui/material/TextField'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
+import axios from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import * as yup from 'yup'
-import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { getCookies } from 'src/store/actions/cookie-actions'
 import UserAvailabilitySchedulerTable from 'src/views/table/data-grid/UserAvailabilitySchedulerTable'
-import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import * as yup from 'yup'
 
 const defaultValues = {
   shift: '',
@@ -44,8 +43,6 @@ const SchedulerPage = () => {
   const handlePlansClickOpen = () => setOpenPlans(true)
   const handlePlansClose = () => setOpenPlans(false)
 
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   // YUP validation rules
   const schema = yup.object().shape({
@@ -66,6 +63,8 @@ const SchedulerPage = () => {
 
   const onSubmit = data => {
     const { shift, availabilityDate } = data
+    const token = getCookies();
+
     console.log(shift)
     console.log(availabilityDate)
 
@@ -77,7 +76,7 @@ const SchedulerPage = () => {
         availabilityDate
       },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {

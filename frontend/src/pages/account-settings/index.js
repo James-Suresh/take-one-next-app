@@ -20,9 +20,7 @@ import TabAccountData from 'src/views/pages/account-settings/TabAccountData'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import { isAuth } from 'src/hooks/helpers'
-import TabPersonal from 'src/views/pages/account-settings/TabPersonal'
-import TabWork from 'src/views/pages/account-settings/TabWork'
+import { useAuth } from 'src/hooks/useAuth'
 import TabPersonalData from 'src/views/pages/account-settings/TabPersonalData'
 import TabWorkData from 'src/views/pages/account-settings/TabWorkData'
 
@@ -48,7 +46,8 @@ const AccountSettings = () => {
   const [value, setValue] = useState('account')
 
   // ** Auth variables
-  const id = isAuth()._id
+  const { user } = useAuth();
+  const id = user?._id;
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -90,15 +89,21 @@ const AccountSettings = () => {
             }
           />
         </TabList>
-        <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccountData id={id} />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='personal'>
-          <TabPersonalData id={id} />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='work'>
-          <TabWorkData id={id} />
-        </TabPanel>
+        {id &&
+          <>
+            <TabPanel sx={{ p: 0 }} value='account'>
+              <TabAccountData id={id} />
+            </TabPanel>
+            <TabPanel sx={{ p: 0 }} value='personal'>
+              <TabPersonalData id={id} />
+            </TabPanel>
+            <TabPanel sx={{ p: 0 }} value='work'>
+              <TabWorkData id={id} />
+            </TabPanel>
+
+          </>
+
+        }
       </TabContext>
     </Card>
   )

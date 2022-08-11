@@ -6,6 +6,8 @@ import { useRouter } from 'next/router'
 
 // ** Hooks Import
 import { useAuth } from 'src/hooks/useAuth'
+import {getCookies} from 'src/store/actions/cookie-actions'
+
 
 const AuthGuard = props => {
   const { children, fallback } = props
@@ -13,10 +15,12 @@ const AuthGuard = props => {
   const router = useRouter()
   useEffect(
     () => {
+      const token = getCookies()
+      
       if (!router.isReady) {
         return
       }
-      if (auth.user === null && !window.localStorage.getItem('userData')) {
+      if (auth.user === null && !token) {
         if (router.asPath !== '/') {
           router.replace({
             pathname: '/login',

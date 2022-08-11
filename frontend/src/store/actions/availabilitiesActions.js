@@ -6,7 +6,7 @@
 //     method: 'DELETE',
 //     url: `http://localhost:8000/api/availabilities/${id}`,
 //     headers: {
-//       Authorization: `Bearer ${storageChecked}`
+//       Authorization: `Bearer ${token}`
 //     }
 //   })
 //   if (response.status === 200) {

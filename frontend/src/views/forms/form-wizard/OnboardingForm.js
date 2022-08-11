@@ -2,52 +2,49 @@
 import { Fragment, useState } from 'react'
 
 // ** MUI Imports
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
+import MobileDatePicker from '@mui/lab/MobileDatePicker'
+import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup, styled } from '@mui/material'
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Step from '@mui/material/Step'
-import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import Stepper from '@mui/material/Stepper'
-import MenuItem from '@mui/material/MenuItem'
-import StepLabel from '@mui/material/StepLabel'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import InputLabel from '@mui/material/InputLabel'
+import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
 import Select from '@mui/material/Select'
-import MobileDatePicker from '@mui/lab/MobileDatePicker'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import AdapterDateFns from '@mui/lab/AdapterDateFns'
-import DatePicker from '@mui/lab/DatePicker'
-import { FormControlLabel, FormHelperText, FormLabel, Radio, RadioGroup, styled } from '@mui/material'
+import Step from '@mui/material/Step'
+import StepLabel from '@mui/material/StepLabel'
+import Stepper from '@mui/material/Stepper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
 // ** Icons Imports
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Custom Components Imports
 import StepperCustomDot from './StepperCustomDot'
 
 // ** Config
-import authConfig from 'src/configs/auth'
 
 // ** Third Party Imports
-import toast from 'react-hot-toast'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import axios from 'axios'
-import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import uploadFile from 'src/configs/firebase/uploadFile'
 import { v4 as uuidv4 } from 'uuid'
+import * as yup from 'yup'
 
 // ** Styled Component
-import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
+import StepperWrapper from 'src/@core/styles/mui/stepper'
+import { useAuth } from 'src/hooks/useAuth'
+import { getCookies } from 'src/store/actions/cookie-actions'
+import { setUser } from 'src/store/slices/auth-slice'
 
 // ** Styled Components
 const ImgStyled = styled('img')(({ theme }) => ({
@@ -117,12 +114,11 @@ const OnboaringForm = () => {
   const [newPhoto, setNewPhoto] = useState()
 
   // ** Auth variables
-  const auth = isAuth()
-  const currentUser = auth
+  const { auth } = useAuth();
+  const currentUserId = auth?._id;
   const router = useRouter()
+  const dispatch = useDispatch()
 
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   // Handle Stepper
   const handleBack = () => {
@@ -179,12 +175,15 @@ const OnboaringForm = () => {
 
   // Handle form submit
   const onSubmit = async data => {
+    if (!currentUserId) return;
+    const token = getCookies()
+
     const file = imgSrc
     if (file) {
       // define all variables to send to backend
       const since = basicPicker
       const imageName = uuidv4() + '.' + file
-      const photoURL = await uploadFile(file, `profile/${currentUser._id}/${imageName}`)
+      const photoURL = await uploadFile(file, `profile/${currentUserId}/${imageName}`)
 
       if (photoURL) {
         const {
@@ -230,12 +229,12 @@ const OnboaringForm = () => {
             photoURL
           },
           headers: {
-            Authorization: `Bearer ${storageChecked}`
+            Authorization: `Bearer ${token}`
           }
         })
           .then(async res => {
             console.log('THE RESP', res.data)
-            window.localStorage.setItem('userData', JSON.stringify(res.data.updatedUser))
+            dispatch(setUser(res.data.updatedUser));
             toast.success('You have been successfully onboarded!')
             router.push('/')
           })

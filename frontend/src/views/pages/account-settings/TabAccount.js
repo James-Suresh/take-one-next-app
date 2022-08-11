@@ -1,6 +1,6 @@
 // ** React Imports
-import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 // ** MUI Imports
 import { LocalizationProvider, MobileDatePicker } from '@mui/lab'
@@ -15,10 +15,8 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
 // ** Auth Imports
-import { getLocalStorage } from 'src/hooks/helpers'
 
 // ** Config
-import authConfig from 'src/configs/auth'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -26,6 +24,7 @@ import axios from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import uploadFile from 'src/configs/firebase/uploadFile'
+import { getCookies } from 'src/store/actions/cookie-actions'
 import { v4 as uuidv4 } from 'uuid'
 import * as yup from 'yup'
 
@@ -54,7 +53,6 @@ const ResetButtonStyled = styled(Button)(({ theme }) => ({
 }))
 
 // ** Auth variables
-// const auth = isAuth()
 // const currentUser = auth
 
 const TabAccount = ({ data }) => {
@@ -64,9 +62,6 @@ const TabAccount = ({ data }) => {
   const [imgSrc, setImgSrc] = useState(data.photoURL)
   const [newPhoto, setNewPhoto] = useState()
   const [submit, setSubmit] = useState('save changes')
-
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   // ** Hooks
   const router = useRouter()
@@ -114,7 +109,9 @@ const TabAccount = ({ data }) => {
 
   // Handle form submit to database
   const onSubmit = async data => {
-    setSubmit('Saving...')
+    setSubmit('Saving...');
+    const token = getCookies();
+
     const file = imgSrc
     if (file) {
       // define all variables to send to backend
@@ -139,7 +136,7 @@ const TabAccount = ({ data }) => {
             photoURL
           },
           headers: {
-            Authorization: `Bearer ${storageChecked}`
+            Authorization: `Bearer ${token}`
           }
         })
           .then(response => {

@@ -24,7 +24,8 @@ import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
 // ** Context
-import { useAuth } from 'src/hooks/useAuth'
+import { useDispatch } from 'react-redux'
+import { removeCookies } from 'src/store/actions/cookie-actions'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -44,7 +45,8 @@ const UserDropdown = props => {
 
   // ** Hooks
   const router = useRouter()
-  const { logout } = useAuth()
+  const dispatch = useDispatch()
+
 
   // ** Vars
   const { direction } = settings
@@ -75,8 +77,9 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
-    logout()
-    handleDropdownClose()
+    dispatch(logout());
+    removeCookies();
+    handleDropdownClose('/login')
   }
 
   return (

@@ -1,23 +1,19 @@
-import React, { Fragment, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
 
 // ** Demo Component Imports
 import { Box, Button, CardContent, Grid, TextField, Typography } from '@mui/material'
-import { Editor, EditorState } from 'draft-js'
-import 'draft-js/dist/Draft.css'
-import { getLocalStorage } from 'src/hooks/helpers'
 import axios from 'axios'
+import 'draft-js/dist/Draft.css'
 import toast from 'react-hot-toast'
+import { getCookies } from 'src/store/actions/cookie-actions'
 
 const FormLayoutAdminNotes = ({ viewedUser }) => {
   // ** States
   const [notes, setNotes] = useState()
   // const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty())
-
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   // Get viewed user info from useEffect props
   const viewedUserId = viewedUser._id
@@ -30,6 +26,8 @@ const FormLayoutAdminNotes = ({ viewedUser }) => {
   }
 
   const handleSubmit = () => {
+    const token = getCookies();
+
     axios({
       method: 'PUT',
       url: 'http://localhost:8000/api/user/update/admin/generalnotes',
@@ -38,7 +36,7 @@ const FormLayoutAdminNotes = ({ viewedUser }) => {
         viewedUserId
       },
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {

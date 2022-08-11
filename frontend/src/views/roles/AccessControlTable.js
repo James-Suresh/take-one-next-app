@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 // ** Next Images
 import Link from 'next/link'
@@ -8,36 +8,31 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { DataGrid } from '@mui/x-data-grid'
-import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
+import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import { DataGrid } from '@mui/x-data-grid'
 
 // ** Icons Imports
-import Laptop from 'mdi-material-ui/Laptop'
-import ChartDonut from 'mdi-material-ui/ChartDonut'
+import AccountOutline from 'mdi-material-ui/AccountOutline'
 import CogOutline from 'mdi-material-ui/CogOutline'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
-import PencilOutline from 'mdi-material-ui/PencilOutline'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
+import Laptop from 'mdi-material-ui/Laptop'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData } from 'src/store/apps/user'
 
 // ** Custom Components Imports
-import TableHeader from 'src/views/roles/TableHeader'
-import { getLocalStorage } from 'src/hooks/helpers'
 import axios from 'axios'
+import { getCookies } from 'src/store/actions/cookie-actions'
+import TableHeader from 'src/views/roles/TableHeader'
 
 // ** Vars
 const userRoleObj = {
@@ -203,9 +198,6 @@ const UserList = () => {
   const [pageSize, setPageSize] = useState(10)
   const [data, setData] = React.useState([])
 
-  // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
-
   // ** Hooks
   // const dispatch = useDispatch()
   // const store = useSelector(state => state.user)
@@ -225,11 +217,13 @@ const UserList = () => {
   }, [])
 
   const getAllUsers = async () => {
+    const token = getCookies();
+
     const response = await axios({
       method: 'GET',
       url: 'http://localhost:8000/api/users/all',
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {

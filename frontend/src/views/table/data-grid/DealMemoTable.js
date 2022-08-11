@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 // ** Next Images
 import Link from 'next/link'
@@ -9,39 +9,30 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { DataGrid } from '@mui/x-data-grid'
 import { styled } from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import { DataGrid } from '@mui/x-data-grid'
 
 // ** Icons Imports
-import Laptop from 'mdi-material-ui/Laptop'
+import AccountOutline from 'mdi-material-ui/AccountOutline'
 import ChartDonut from 'mdi-material-ui/ChartDonut'
 import CogOutline from 'mdi-material-ui/CogOutline'
-import EyeOutline from 'mdi-material-ui/EyeOutline'
+import Laptop from 'mdi-material-ui/Laptop'
 import PencilOutline from 'mdi-material-ui/PencilOutline'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
-import PictureAsPdfRoundedIcon from '@mui/icons-material/PictureAsPdfRounded'
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
 
 // ** Custom Components Imports
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/dealmemo-avatar'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData } from 'src/store/apps/user'
 
 // ** Custom Components Imports
-import DealMemoTableHeader from 'src/views/table/data-grid/DealMemoTableHeader'
 import axios from 'axios'
 import moment from 'moment'
-import { getLocalStorage } from 'src/hooks/helpers'
+import { getCookies } from 'src/store/actions/cookie-actions'
+import DealMemoTableHeader from 'src/views/table/data-grid/DealMemoTableHeader'
 
 // ** Vars
 const userRoleObj = {
@@ -196,7 +187,7 @@ const columns = [
           size='small'
           variant='contained'
           color='primary'
-          // onClick={() => getFullName(params)}
+        // onClick={() => getFullName(params)}
         >
           Deal MEMO
         </Button>
@@ -214,7 +205,6 @@ const UserList = () => {
   const [data, setData] = React.useState([])
 
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
 
   // ** Hooks
   // const dispatch = useDispatch()
@@ -235,11 +225,13 @@ const UserList = () => {
   }, [])
 
   const getDealMemos = async () => {
+    const token = getCookies();
+
     const response = await axios({
       method: 'GET',
       url: 'http://localhost:8000/api/dealmemo/all',
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {

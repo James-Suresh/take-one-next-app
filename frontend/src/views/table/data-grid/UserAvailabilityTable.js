@@ -3,31 +3,27 @@ import React, { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
+import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
+import Typography from '@mui/material/Typography'
 import { DataGrid } from '@mui/x-data-grid'
 
 // ** Third Party Components
 import toast from 'react-hot-toast'
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Data Import
-import { rows } from 'src/@fake-db/table/static-data'
+import { DeleteForeverRounded } from '@mui/icons-material'
 import { IconButton, Stack, Tooltip } from '@mui/material'
-import { DeleteForeverRounded, EditRounded, LightModeRounded } from '@mui/icons-material'
 import axios from 'axios'
 import moment from 'moment'
-import { getLocalStorage, isAuth } from 'src/hooks/helpers'
-import { deleteAvailability } from 'src/store/actions/availabilitiesActions'
-import { useDispatch } from 'react-redux'
+import { getCookies } from 'src/store/actions/cookie-actions'
 
 const shiftObj = {
   Day: { title: 'Day Shift', color: 'yeild' },
@@ -41,7 +37,8 @@ const UserViewTable = ({ viewedUser }) => {
   const [data, setData] = React.useState([])
 
   // Tokenization for server request
-  const storageChecked = getLocalStorage('accessToken')
+  const token = getCookies();
+
 
   // ** Hooks
   // const dispatch = useDispatch()
@@ -54,7 +51,7 @@ const UserViewTable = ({ viewedUser }) => {
     //   method: 'GET',
     //   url: 'http://localhost:8000/api/availabilities/ofuser',
     //   headers: {
-    //     Authorization: `Bearer ${storageChecked}`
+    //     Authorization: `Bearer ${token}`
     //   }
     // }).then(res => {
     //   // setData(res.data)
@@ -67,7 +64,7 @@ const UserViewTable = ({ viewedUser }) => {
       method: 'GET',
       url: `http://localhost:8000/api/availabilities/ofuser/${userId}`,
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {
@@ -85,7 +82,7 @@ const UserViewTable = ({ viewedUser }) => {
       method: 'DELETE',
       url: `http://localhost:8000/api/availabilities/${id}`,
       headers: {
-        Authorization: `Bearer ${storageChecked}`
+        Authorization: `Bearer ${token}`
       }
     })
     if (response.status === 200) {
