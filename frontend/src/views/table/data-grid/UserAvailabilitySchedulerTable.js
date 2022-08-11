@@ -28,7 +28,7 @@ const shiftObj = {
   Night: { title: 'Night Shift', color: 'info' }
 }
 
-const UserAvailabilityTable = () => {
+const UserAvailabilityTable = ({onSubmit}) => {
   // ** States
   const [pageSize, setPageSize] = useState(7)
   const [hideNameColumn, setHideNameColumn] = useState(false)
@@ -42,7 +42,9 @@ const UserAvailabilityTable = () => {
   useEffect(() => {
     getAvailabilities()
   }, [])
-
+  useEffect(() => {
+    getAvailabilities()
+  }, [onSubmit])
   const getAvailabilities = async () => {
     const response = await axios({
       method: 'GET',

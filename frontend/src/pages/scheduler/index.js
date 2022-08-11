@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 // ** Context Imports
 
 // ** MUI Imports
+import isWeekend from 'date-fns/isWeekend'
 import { LocalizationProvider, StaticDatePicker } from '@mui/lab'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import Button from '@mui/material/Button'
@@ -30,6 +31,7 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import UserAvailabilitySchedulerTable from 'src/views/table/data-grid/UserAvailabilitySchedulerTable'
 import { getLocalStorage, isAuth } from 'src/hooks/helpers'
+import { parse } from 'date-fns'
 
 const defaultValues = {
   shift: '',
@@ -39,6 +41,9 @@ const defaultValues = {
 const SchedulerPage = () => {
   // ** State
   const [openPlans, setOpenPlans] = useState(false)
+
+  // ** Demo State
+  const [data, setData] = useState([])
 
   // Handle Upgrade Plan dialog
   const handlePlansClickOpen = () => setOpenPlans(true)
@@ -83,6 +88,7 @@ const SchedulerPage = () => {
       .then(response => {
         console.log('add availability success', response)
         toast.success(`New availability date added for ${shift} shift on ${availabilityDate}`)
+        getAvailabilities()
       })
       .catch(error => {
         console.log('add availability ERROR', error.response.data)
@@ -91,7 +97,31 @@ const SchedulerPage = () => {
 
     handlePlansClose()
   }
+  // API call Availabilities Of User ( for Demo)
+  const getAvailabilities = async () => {
+    const response = await axios({
+      method: 'GET',
+      url: 'http://localhost:8000/api/availabilities/ofuser',
+      headers: {
+        Authorization: `Bearer ${storageChecked}`
+      }
+    })
+    if (response.status === 200) {
+      setData(response.data.result)
+    }
+  }
+  useEffect(() => {
+    getAvailabilities()
+  }, [])
 
+  // Disable Date Function
+  function disableDates(date) {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].availabilityDate.slice(8, 10) == date.getDate()) {
+        return true
+      }
+    }
+  }
   return (
     <Grid container spacing={6}>
       <Grid item md={4.5} xs={12}>
@@ -108,6 +138,7 @@ const SchedulerPage = () => {
                     disablePast
                     value={value}
                     onBlur={onBlur}
+                    shouldDisableDate={disableDates}
                     onChange={e => {
                       onChange(e), handlePlansClickOpen()
                     }}
@@ -115,6 +146,7 @@ const SchedulerPage = () => {
                     displayStaticWrapperAs='mobile'
                     renderInput={params => <TextField {...params} />}
                   />
+                  ....
                 </LocalizationProvider>
               )}
             />
@@ -186,7 +218,7 @@ const SchedulerPage = () => {
       </Grid>
       <Grid item md={7.5} xs={12}>
         <Card>
-          <UserAvailabilitySchedulerTable />
+          <UserAvailabilitySchedulerTable onSubmit={onSubmit} />
         </Card>
       </Grid>
     </Grid>
